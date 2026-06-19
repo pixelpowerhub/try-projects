@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Pixel Meet - Pixel Power Hub</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
@@ -198,6 +198,64 @@
   footer { margin-top: auto; padding-top: 28px; text-align: center; font-size: 12px; color: var(--muted); font-family: var(--mono); }
   
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
+  /* ── Accessibility: visible focus states ── */
+  button:focus-visible, input:focus-visible, [tabindex]:focus-visible, a:focus-visible {
+    outline: 2px solid var(--accent2); outline-offset: 2px; border-radius: 6px;
+  }
+
+  .toast.warn { background: rgba(251,188,5,0.12); border: 1px solid rgba(251,188,5,0.3); color: var(--yellow); }
+
+  .icon-btn.unsupported { opacity: 0.45; }
+  .icon-btn.unsupported:hover { background: var(--surface3); border-color: var(--border); }
+
+  /* ── Presenting banner (shown to the person sharing) ── */
+  .presenting-bar { display: none; align-items: center; justify-content: space-between; gap: 10px; background: rgba(66,133,244,0.12); border: 1px solid rgba(66,133,244,0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: var(--accent2); }
+  .presenting-bar.show { display: flex; }
+  .presenting-bar span { display: flex; align-items: center; gap: 6px; }
+  .presenting-bar button { background: var(--red); color: #fff; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+
+  /* ── Screen share viewer toolbar ── */
+  .screenshare-toolbar { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 5; }
+  .screenshare-toolbar button { width: 32px; height: 32px; border-radius: 8px; border: none; background: rgba(0,0,0,0.55); color: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .screenshare-toolbar button:hover { background: rgba(0,0,0,0.8); }
+
+  /* ── "More" overflow menu (keeps the controls bar clean) ── */
+  .ctrl-group.more-wrap { position: relative; }
+  .more-menu { position: absolute; bottom: calc(100% + 10px); right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 215px; box-shadow: 0 10px 30px rgba(0,0,0,0.55); display: none; flex-direction: column; gap: 2px; z-index: 20; }
+  .more-menu.open { display: flex; }
+  .more-item { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: none; color: var(--text); padding: 11px 12px; border-radius: 8px; font-size: 14px; cursor: pointer; text-align: left; font-family: var(--font); }
+  .more-item:hover { background: var(--surface3); }
+  .more-item.active-blue { background: rgba(66,133,244,0.12); color: var(--accent2); }
+  .more-item.active-record { background: rgba(234,67,53,0.12); color: var(--red); animation: pulseRecord 2s infinite; }
+  .more-menu hr { border: none; border-top: 1px solid var(--border); margin: 4px 2px; }
+
+  /* ── Co-host badge ── */
+  .cohost-badge { font-size: 9px; padding: 2px 6px; border-radius: 6px; background: rgba(251,188,5,0.15); color: var(--yellow); border: 1px solid rgba(251,188,5,0.3); margin-left: 4px; font-weight: 700; letter-spacing: 0.5px; vertical-align: middle; }
+
+  /* ── Participant management (kebab) menu ── */
+  .part-list-item { position: relative; }
+  .part-kebab { background: transparent; border: none; color: var(--muted); font-size: 17px; cursor: pointer; padding: 4px 9px; border-radius: 6px; line-height: 1; }
+  .part-kebab:hover { background: var(--surface3); }
+  .part-actions { position: absolute; right: 6px; top: 44px; background: var(--surface3); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 180px; z-index: 30; display: none; flex-direction: column; gap: 2px; box-shadow: 0 8px 24px rgba(0,0,0,0.55); }
+  .part-actions.open { display: flex; }
+  .part-actions button { background: transparent; border: none; color: var(--text); padding: 9px 10px; border-radius: 6px; font-size: 13px; text-align: left; cursor: pointer; font-family: var(--font); }
+  .part-actions button:hover { background: var(--surface2); }
+  .part-actions button.danger { color: var(--red); }
+
+  /* ── Panel backdrop (Zoom-style drawer dimming) ── */
+  .panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .panel-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  /* ── Mobile: side panels become full-screen drawers, not clipped ── */
+  @media (max-width: 680px) {
+    .side-panel { position: fixed; max-width: none; }
+  }
+  @media (max-width: 380px) {
+    .icon-btn { width: 41px; height: 41px; font-size: 18px; }
+    .controls-bar { padding: 10px 12px; gap: 6px; }
+    .ctrl-group { gap: 6px; }
+  }
 </style>
 </head>
 <body>
@@ -205,21 +263,21 @@
 <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
 <!-- Name Overlay (First time) -->
-<div class="overlay hidden" id="overlayName" aria-modal="true" role="dialog">
+<div class="overlay hidden" id="overlayName" aria-modal="true" role="dialog" aria-labelledby="overlayNameTitle" aria-describedby="overlayNameSub">
   <div class="overlay-card">
-    <div class="overlay-title">Welcome to Pixel Meet</div>
-    <div class="overlay-sub">Please enter your name to continue.</div>
-    <input class="name-input" id="globalNameInput" type="text" maxlength="20" placeholder="e.g. Sidhu" autocomplete="off" />
+    <div class="overlay-title" id="overlayNameTitle">Welcome to Pixel Meet</div>
+    <div class="overlay-sub" id="overlayNameSub">Please enter your name to continue.</div>
+    <input class="name-input" id="globalNameInput" type="text" maxlength="20" placeholder="e.g. Sidhu" autocomplete="off" aria-label="Your name" />
     <button class="btn btn-primary" id="btnSaveGlobalName">Save & Continue</button>
   </div>
 </div>
 
 <!-- Config Overlay (Create) -->
-<div class="overlay hidden" id="overlayCreateConfig" aria-modal="true" role="dialog">
+<div class="overlay hidden" id="overlayCreateConfig" aria-modal="true" role="dialog" aria-labelledby="overlayCreateTitle">
   <div class="overlay-card">
-    <div class="overlay-title">Meeting Settings</div>
+    <div class="overlay-title" id="overlayCreateTitle">Meeting Settings</div>
     
-    <label class="field-label">Meeting Topic (Optional)</label>
+    <label class="field-label" for="topicInput">Meeting Topic (Optional)</label>
     <input class="name-input" id="topicInput" type="text" maxlength="40" placeholder="e.g. Weekly Sync" autocomplete="off" />
 
     <div class="checkbox-wrap">
@@ -238,10 +296,10 @@
 </div>
 
 <!-- Leave Overlay -->
-<div class="overlay hidden" id="overlayLeave" aria-modal="true" role="dialog">
+<div class="overlay hidden" id="overlayLeave" aria-modal="true" role="dialog" aria-labelledby="overlayLeaveTitle" aria-describedby="overlayLeaveSub">
   <div class="overlay-card">
-    <div class="overlay-title">Leave Meeting</div>
-    <div class="overlay-sub">Are you sure you want to leave this meeting?</div>
+    <div class="overlay-title" id="overlayLeaveTitle">Leave Meeting</div>
+    <div class="overlay-sub" id="overlayLeaveSub">Are you sure you want to leave this meeting?</div>
     
     <div id="hostEndMeetingOption" style="display:none;" class="checkbox-wrap">
       <input type="checkbox" id="checkEndForAll" />
@@ -320,6 +378,8 @@
 <!-- ══ SCREEN: Room ══ -->
 <div class="card screen" id="screenRoom" role="main" style="padding: 16px;">
 
+  <div class="panel-backdrop" id="panelBackdrop"></div>
+
   <!-- Side Panels -->
   <div class="side-panel" id="panelParticipants">
     <div class="panel-header">
@@ -381,8 +441,16 @@
     You are the only one here. Waiting for others...
   </div>
 
+  <div class="presenting-bar" id="presentingBar">
+    <span>🖥️ You are presenting your screen</span>
+    <button id="btnStopPresenting">Stop Sharing</button>
+  </div>
+
   <!-- Screen Share Container -->
   <div id="screenShareContainer">
+    <div class="screenshare-toolbar">
+      <button id="btnFullscreenShare" title="View Fullscreen" aria-label="View screen share fullscreen">⛶</button>
+    </div>
     <video id="screenShareVideo" autoplay playsinline></video>
   </div>
 
@@ -402,17 +470,11 @@
       <button class="icon-btn" id="btnMute" title="Toggle Microphone" aria-label="Microphone">
         🎤
       </button>
-      <button class="icon-btn" id="btnSpeaker" title="Switch Audio Output" aria-label="Switch Speaker">
-        🔊
-      </button>
       <button class="icon-btn" id="btnShare" title="Share Screen" aria-label="Screen Share">
         💻
       </button>
-      <button class="icon-btn" id="btnRecord" title="Record Audio (Host Only)" aria-label="Record" style="display:none;">
-        ⏺️
-      </button>
     </div>
-    
+
     <div class="ctrl-group">
       <button class="icon-btn" onclick="togglePanel('panelParticipants')" title="Participants" aria-label="Participants">
         👥 <span class="badge-count" id="badgePart" style="display:none;">0</span>
@@ -420,9 +482,25 @@
       <button class="icon-btn" onclick="togglePanel('panelChat')" title="Chat" aria-label="Chat">
         💬 <span class="badge-count" id="badgeChat" style="display:none;">0</span>
       </button>
-      <button class="icon-btn" onclick="togglePanel('panelDetails')" title="Meeting Details" aria-label="Details">
-        ℹ️
-      </button>
+    </div>
+
+    <div class="ctrl-group more-wrap">
+      <button class="icon-btn" id="btnMore" title="More options" aria-label="More options" aria-haspopup="menu" aria-expanded="false">⋮</button>
+      <div class="more-menu" id="moreMenu" role="menu" aria-label="More meeting options">
+        <button class="more-item" id="btnSpeaker" role="menuitem" title="Switch Audio Output">
+          <span id="btnSpeakerIcon" aria-hidden="true">🔊</span><span>Switch Audio Output</span>
+        </button>
+        <button class="more-item" id="btnDetailsMenu" role="menuitem" title="Meeting Details">
+          <span aria-hidden="true">ℹ️</span><span>Meeting Details</span>
+        </button>
+        <button class="more-item" id="btnMuteAll" role="menuitem" title="Mute All Participants" style="display:none;">
+          <span aria-hidden="true">🔇</span><span>Mute All Participants</span>
+        </button>
+        <hr id="hostMenuDivider" style="display:none;" />
+        <button class="more-item" id="btnRecord" role="menuitem" title="Record Meeting Audio (Host Only)" style="display:none;">
+          <span id="btnRecordIcon" aria-hidden="true">⏺️</span><span id="btnRecordLabel">Start Recording</span>
+        </button>
+      </div>
     </div>
 
     <button class="icon-btn btn-danger-fill" id="btnLeavePrompt" title="Leave Meeting" aria-label="Leave Meeting">
@@ -473,6 +551,7 @@ let roomCode = null;     // Meeting ID
 let meetingCode = '';    // Secure Meeting Code (Auth)
 let roomTopic = "Meeting";
 let isHost = false;
+let myIsCoHost = false;
 let localStream = null;
 let isMuted = false;
 let isBusy = false;
@@ -497,9 +576,51 @@ let audioDestNode = null;
 // Speaker routing
 let useLoudspeaker = true;
 
-const peers = {}; // id -> { conn, call, name, stream, audioEl, muted, isHost }
+// Feature detection
+const SCREEN_SHARE_SUPPORTED = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+
+const peers = {}; // id -> { conn, call, name, stream, audioEl, muted, isHost, isCoHost }
 
 const $ = id => document.getElementById(id);
+
+// ── Accessible Dialog Helpers ──
+let lastFocusedEl = null;
+
+function openOverlay(id) {
+  const el = $(id);
+  lastFocusedEl = document.activeElement;
+  el.classList.remove('hidden');
+  const focusable = el.querySelector('input, button, [href], select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (focusable) focusable.focus();
+  document.addEventListener('keydown', overlayKeyHandler);
+}
+
+function closeOverlay(id) {
+  const el = $(id);
+  el.classList.add('hidden');
+  document.removeEventListener('keydown', overlayKeyHandler);
+  if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') lastFocusedEl.focus();
+}
+
+function overlayKeyHandler(e) {
+  const openEl = document.querySelector('.overlay:not(.hidden)');
+  if (!openEl) return;
+
+  if (e.key === 'Escape') {
+    const cancelBtn = openEl.querySelector('#btnCancelCreate, #btnCancelLeave');
+    if (cancelBtn) cancelBtn.click();
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    const focusables = Array.from(openEl.querySelectorAll('input, button, [href], select, textarea, [tabindex]:not([tabindex="-1"])'))
+      .filter(f => !f.disabled && f.offsetParent !== null);
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+}
 
 // ── Profile Setup ──
 function checkProfile() {
@@ -508,7 +629,7 @@ function checkProfile() {
     $('displaySavedName').textContent = escapeHTML(myName);
   } else {
     $('userBadge').style.display = 'none';
-    $('overlayName').classList.remove('hidden');
+    openOverlay('overlayName');
   }
 }
 
@@ -517,7 +638,7 @@ $('btnSaveGlobalName').onclick = () => {
   if(!n) { $('globalNameInput').style.borderColor = 'var(--red)'; return; }
   myName = n;
   localStorage.setItem('pixelMeet_name', myName);
-  $('overlayName').classList.add('hidden');
+  closeOverlay('overlayName');
   checkProfile();
 };
 
@@ -575,11 +696,13 @@ function togglePanel(id) {
   const panel = $(id);
   if (panel.classList.contains('open')) {
     panel.classList.remove('open');
+    $('panelBackdrop').classList.remove('show');
   } else {
     ['panelParticipants', 'panelChat', 'panelDetails'].forEach(p => {
       if(p !== id) $(p).classList.remove('open');
     });
     panel.classList.add('open');
+    $('panelBackdrop').classList.add('show');
     
     if(id === 'panelChat') {
       unreadCount = 0;
@@ -587,6 +710,37 @@ function togglePanel(id) {
     }
   }
 }
+
+$('panelBackdrop').onclick = () => {
+  ['panelParticipants', 'panelChat', 'panelDetails'].forEach(p => $(p).classList.remove('open'));
+  $('panelBackdrop').classList.remove('show');
+};
+
+// ── "More" overflow menu ──
+$('btnMore').onclick = (e) => {
+  e.stopPropagation();
+  const open = $('moreMenu').classList.toggle('open');
+  $('btnMore').setAttribute('aria-expanded', open ? 'true' : 'false');
+};
+
+$('moreMenu').addEventListener('click', (e) => {
+  if (e.target.closest('button')) {
+    setTimeout(() => {
+      $('moreMenu').classList.remove('open');
+      $('btnMore').setAttribute('aria-expanded', 'false');
+    }, 50);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.more-wrap')) {
+    $('moreMenu').classList.remove('open');
+    $('btnMore').setAttribute('aria-expanded', 'false');
+  }
+  if (!e.target.closest('.part-actions') && !e.target.closest('.part-kebab')) {
+    document.querySelectorAll('.part-actions.open').forEach(m => m.classList.remove('open'));
+  }
+});
 
 // Config Listeners
 $('checkAutoClose').onchange = (e) => {
@@ -632,12 +786,12 @@ $('btnSpeaker').onclick = async () => {
     if(useLoudspeaker) {
        const spk = audioOutputs.find(d => d.label.toLowerCase().includes('speaker') || d.deviceId === 'default');
        targetSink = spk ? spk.deviceId : audioOutputs[0].deviceId;
-       $('btnSpeaker').textContent = '🔊';
+       $('btnSpeakerIcon').textContent = '🔊';
        toast('Switched to Loudspeaker', 'info');
     } else {
        const ear = audioOutputs.find(d => d.label.toLowerCase().includes('earpiece') || d.deviceId === 'communications');
        targetSink = ear ? ear.deviceId : audioOutputs[audioOutputs.length - 1].deviceId;
-       $('btnSpeaker').textContent = '🔈';
+       $('btnSpeakerIcon').textContent = '🔈';
        toast('Switched to Earpiece', 'info');
     }
 
@@ -650,6 +804,8 @@ $('btnSpeaker').onclick = async () => {
     toast('Could not switch audio output.', 'error');
   }
 };
+
+$('btnDetailsMenu').onclick = () => togglePanel('panelDetails');
 
 function addAudio(stream, peerId) {
   let audioEl = document.getElementById('audio-'+peerId);
@@ -677,6 +833,33 @@ async function getMic() {
     toast('Microphone access required.', 'error');
     return false;
   }
+}
+
+// ── Bitrate Tuning (clearer voice, crisper screen share) ──
+function boostAudioBitrate(call) {
+  try {
+    const pc = call && call.peerConnection;
+    if (!pc) return;
+    pc.getSenders().filter(s => s.track && s.track.kind === 'audio').forEach(sender => {
+      const params = sender.getParameters();
+      if (!params.encodings || !params.encodings.length) params.encodings = [{}];
+      params.encodings[0].maxBitrate = 128000; // 128kbps for clear voice
+      sender.setParameters(params).catch(() => {});
+    });
+  } catch(e) {}
+}
+
+function boostVideoBitrate(call) {
+  try {
+    const pc = call && call.peerConnection;
+    if (!pc) return;
+    pc.getSenders().filter(s => s.track && s.track.kind === 'video').forEach(sender => {
+      const params = sender.getParameters();
+      if (!params.encodings || !params.encodings.length) params.encodings = [{}];
+      params.encodings[0].maxBitrate = 3000000; // ~3Mbps for a sharp screen share
+      sender.setParameters(params).catch(() => {});
+    });
+  } catch(e) {}
 }
 
 // ── Timers ──
@@ -714,11 +897,17 @@ function initPeer(code, onReady) {
 
   myPeer.on('connection', conn => {
     const pid = conn.peer;
-    if (!peers[pid]) peers[pid] = { name:'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost: false };
+    if (!peers[pid]) peers[pid] = { name:'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost: false, isCoHost: false };
     peers[pid].conn = conn;
     
     conn.on('open', () => {
       // Just opened. The connecting peer will send 'hello' with the meeting code.
+      // If we are already sharing our screen, push it to this newly connected peer.
+      if (localScreenStream && !screenCalls[pid]) {
+        const sCall = myPeer.call(pid, localScreenStream, { metadata: { type: 'screen' } });
+        screenCalls[pid] = sCall;
+        boostVideoBitrate(sCall);
+      }
     });
     
     conn.on('data', d => handleData(d, pid));
@@ -744,7 +933,8 @@ function initPeer(code, onReady) {
     }
 
     call.answer(localStream);
-    if (!peers[pid]) peers[pid] = { name:'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost:false };
+    boostAudioBitrate(call);
+    if (!peers[pid]) peers[pid] = { name:'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost:false, isCoHost:false };
     peers[pid].call = call;
     call.on('stream', stream => {
       peers[pid].stream = stream;
@@ -763,7 +953,7 @@ function initPeer(code, onReady) {
 
 function connectToPeer(pid, name) {
   if (peers[pid] || pid === myCode) return;
-  peers[pid] = { name: name||'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost: false };
+  peers[pid] = { name: name||'?', conn:null, call:null, stream:null, audioEl:null, muted:false, isHost: false, isCoHost: false };
 
   const conn = myPeer.connect(pid, { reliable:true });
   peers[pid].conn = conn;
@@ -779,6 +969,7 @@ function connectToPeer(pid, name) {
   if (localStream) {
     const call = myPeer.call(pid, localStream);
     peers[pid].call = call;
+    boostAudioBitrate(call);
     call.on('stream', stream => {
       peers[pid].stream = stream;
       addAudio(stream, pid);
@@ -790,6 +981,7 @@ function connectToPeer(pid, name) {
   if (localScreenStream) {
     const sCall = myPeer.call(pid, localScreenStream, { metadata: { type: 'screen' } });
     screenCalls[pid] = sCall;
+    boostVideoBitrate(sCall);
   }
 }
 
@@ -861,7 +1053,86 @@ function handleData(data, fromId) {
     removePeer(data.id);
     if (isHost) broadcast(data, fromId);
   }
+  else if (data.type === 'cohost_update') {
+    // Only the real host is trusted to grant/revoke Co-Host status
+    const senderTrusted = peers[fromId] && peers[fromId].isHost;
+    if (!senderTrusted) return;
+    if (peers[data.id]) peers[data.id].isCoHost = data.isCoHost;
+    if (data.id === myCode) {
+      myIsCoHost = data.isCoHost;
+      toast(myIsCoHost ? 'You are now a Co-Host' : 'Your Co-Host role was removed', myIsCoHost ? 'success' : 'info');
+      updateHostUI();
+    }
+    updateParticipantsList();
+  }
+  else if (data.type === 'force_mute') {
+    const senderTrusted = peers[fromId] && (peers[fromId].isHost || peers[fromId].isCoHost);
+    if (!senderTrusted || data.target !== myCode) return;
+    if (!isMuted) {
+      toast('You were muted by the host', 'info');
+      $('btnMute').click();
+    }
+  }
+  else if (data.type === 'mute_all') {
+    const senderTrusted = peers[fromId] && (peers[fromId].isHost || peers[fromId].isCoHost);
+    if (!senderTrusted) return;
+    if (!isMuted) {
+      toast('Host muted all participants', 'info');
+      $('btnMute').click();
+    }
+  }
+  else if (data.type === 'remove_peer') {
+    const senderTrusted = peers[fromId] && (peers[fromId].isHost || peers[fromId].isCoHost);
+    if (!senderTrusted || data.target !== myCode) return;
+    toast('You were removed from the meeting by the host', 'error');
+    resetApp();
+  }
 }
+
+// ── Host / Co-Host Controls ──
+function updateHostUI() {
+  const canManage = isHost || myIsCoHost;
+  $('btnRecord').style.display = isHost ? 'flex' : 'none';
+  $('btnMuteAll').style.display = canManage ? 'flex' : 'none';
+  $('hostMenuDivider').style.display = (isHost) ? 'block' : 'none';
+}
+
+function hostRemovePeer(pid) {
+  if (!isHost && !myIsCoHost) return;
+  if (!peers[pid]) return;
+  const name = peers[pid].name || 'Participant';
+  if (peers[pid].conn && peers[pid].conn.open) {
+    try { peers[pid].conn.send({ type:'remove_peer', target: pid }); } catch(e){}
+  }
+  broadcast({ type:'peer_left', id: pid }, pid);
+  removePeer(pid);
+  toast(`${name} was removed`, 'info');
+}
+
+function hostForceMute(pid) {
+  if (!isHost && !myIsCoHost) return;
+  if (peers[pid] && peers[pid].conn && peers[pid].conn.open) {
+    try { peers[pid].conn.send({ type:'force_mute', target: pid }); } catch(e){}
+    toast(`Asked ${peers[pid].name || 'participant'} to mute`, 'info');
+  }
+}
+
+function hostSetCoHost(pid, value) {
+  if (!isHost) return;
+  if (!peers[pid]) return;
+  peers[pid].isCoHost = value;
+  broadcast({ type:'cohost_update', id: pid, isCoHost: value });
+  toast(value ? `${peers[pid].name} is now a Co-Host` : `Co-Host removed from ${peers[pid].name}`, 'info');
+  updateParticipantsList();
+}
+
+function hostMuteAll() {
+  if (!isHost && !myIsCoHost) return;
+  broadcast({ type:'mute_all' });
+  toast('Requested all participants to mute', 'info');
+}
+
+$('btnMuteAll').onclick = hostMuteAll;
 
 function removePeer(pid) {
   if (!peers[pid]) return;
@@ -884,14 +1155,14 @@ function removePeer(pid) {
 // ── Room Flow ──
 $('btnActionCreate').onclick = () => {
   if(!myName) return checkProfile();
-  $('overlayCreateConfig').classList.remove('hidden');
   $('topicInput').value = '';
+  openOverlay('overlayCreateConfig');
 };
 
-$('btnCancelCreate').onclick = () => $('overlayCreateConfig').classList.add('hidden');
+$('btnCancelCreate').onclick = () => closeOverlay('overlayCreateConfig');
 
 $('btnConfirmCreate').onclick = async () => {
-  $('overlayCreateConfig').classList.add('hidden');
+  closeOverlay('overlayCreateConfig');
   const ok = await getMic();
   if (!ok) return;
   
@@ -959,15 +1230,12 @@ function enterRoom() {
   $('stageAvatar').textContent = initials(myName);
   $('stageName').textContent = myName + " (You)";
 
-  // Host Only Controls
-  if(isHost) {
-    $('btnRecord').style.display = 'flex';
-  } else {
-    $('btnRecord').style.display = 'none';
-  }
+  // Host & Co-Host Controls
+  updateHostUI();
   
   // Explicitly close all side panels on entering
   ['panelParticipants', 'panelChat', 'panelDetails'].forEach(p => $(p).classList.remove('open'));
+  $('panelBackdrop').classList.remove('show');
 
   updateParticipantsList();
   
@@ -986,7 +1254,6 @@ function enterRoom() {
 // ── Dynamic UI Updates ──
 function updateParticipantsList() {
   const el = $('participantsList');
-  el.innerHTML = '';
   const count = Object.keys(peers).length + 1;
   $('partCountNum').textContent = count;
   $('badgePart').textContent = count;
@@ -994,11 +1261,13 @@ function updateParticipantsList() {
   
   if(count > 1) $('aloneBanner').style.display = 'none';
 
-  el.innerHTML += `
+  const canManage = isHost || myIsCoHost;
+
+  let html = `
     <div class="part-list-item">
       <div class="part-info">
         <div class="part-avatar me">${initials(myName)}</div>
-        <div class="part-name">${escapeHTML(myName)} <span>(You${isHost ? ', Host' : ''})</span></div>
+        <div class="part-name">${escapeHTML(myName)} <span>(You${isHost ? ', Host' : ''})</span>${myIsCoHost ? '<span class="cohost-badge">CO-HOST</span>' : ''}</div>
       </div>
       <div class="part-status">${isMuted ? '🔇' : '🎤'}</div>
     </div>
@@ -1006,17 +1275,52 @@ function updateParticipantsList() {
 
   for (const [pid, p] of Object.entries(peers)) {
     const sName = escapeHTML(p.name || 'Unknown');
-    el.innerHTML += `
+    const showKebab = canManage && !p.isHost;
+
+    html += `
       <div class="part-list-item">
         <div class="part-info">
           <div class="part-avatar">${initials(sName)}</div>
-          <div class="part-name">${sName} <span>${p.isHost ? '(Host)' : ''}</span></div>
+          <div class="part-name">${sName} <span>${p.isHost ? '(Host)' : ''}</span>${p.isCoHost ? '<span class="cohost-badge">CO-HOST</span>' : ''}</div>
         </div>
         <div class="part-status">${p.muted ? '🔇' : '🎤'}</div>
+        ${showKebab ? `<button class="part-kebab" data-pid="${pid}" aria-haspopup="menu" aria-label="Manage ${sName}">⋮</button>
+        <div class="part-actions" data-pid="${pid}" role="menu">
+          ${!p.muted ? `<button role="menuitem" data-action="mute" data-pid="${pid}">🔇 Mute Participant</button>` : ''}
+          <button role="menuitem" data-action="remove" data-pid="${pid}" class="danger">🚫 Remove from Meeting</button>
+          ${isHost ? (p.isCoHost
+            ? `<button role="menuitem" data-action="removeCohost" data-pid="${pid}">⬇️ Remove Co-Host</button>`
+            : `<button role="menuitem" data-action="makeCohost" data-pid="${pid}">⭐ Make Co-Host</button>`) : ''}
+        </div>` : ''}
       </div>
     `;
   }
+
+  el.innerHTML = html;
 }
+
+$('participantsList').addEventListener('click', (e) => {
+  const kebab = e.target.closest('.part-kebab');
+  if (kebab) {
+    e.stopPropagation();
+    const pid = kebab.dataset.pid;
+    document.querySelectorAll('.part-actions.open').forEach(m => { if (m.dataset.pid !== pid) m.classList.remove('open'); });
+    const menu = el => el && el.classList.toggle('open');
+    menu(document.querySelector(`.part-actions[data-pid="${pid}"]`));
+    return;
+  }
+
+  const actionBtn = e.target.closest('[data-action]');
+  if (actionBtn) {
+    const pid = actionBtn.dataset.pid;
+    const action = actionBtn.dataset.action;
+    if (action === 'mute') hostForceMute(pid);
+    else if (action === 'remove') { if (confirm('Remove this participant from the meeting?')) hostRemovePeer(pid); }
+    else if (action === 'makeCohost') hostSetCoHost(pid, true);
+    else if (action === 'removeCohost') hostSetCoHost(pid, false);
+    document.querySelectorAll('.part-actions.open').forEach(m => m.classList.remove('open'));
+  }
+});
 
 // ── Controls ──
 $('btnMute').onclick = () => {
@@ -1040,31 +1344,97 @@ $('btnMute').onclick = () => {
 };
 
 $('btnShare').onclick = async () => {
+  if (!SCREEN_SHARE_SUPPORTED) {
+    return toast('Screen sharing needs a desktop browser like Chrome, Edge, or Firefox. Most mobile browsers do not support it yet.', 'warn');
+  }
+
   if (localScreenStream) {
-    localScreenStream.getTracks().forEach(t => t.stop());
-    localScreenStream = null;
-    $('btnShare').classList.remove('active-blue');
-    $('screenShareContainer').style.display = 'none';
-    for (let pid in screenCalls) { try { screenCalls[pid].close(); } catch(e){} }
-    screenCalls = {};
-    toast('Screen sharing stopped');
-  } else {
+    stopScreenShare();
+    return;
+  }
+
+  let captureAudio = true;
+  let stream;
+  try {
     try {
-      localScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
-      $('btnShare').classList.add('active-blue');
-      $('screenShareContainer').style.display = 'block';
-      $('screenShareVideo').srcObject = localScreenStream;
-      
-      localScreenStream.getVideoTracks()[0].onended = () => $('btnShare').click();
-      
-      for (let pid in peers) {
-        const call = myPeer.call(pid, localScreenStream, { metadata: { type: 'screen' } });
-        screenCalls[pid] = call;
-      }
-      toast('Screen sharing started', 'success');
-    } catch (e) { }
+      // Try to capture system/tab audio along with the video for better quality
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: { ideal: 30, max: 30 }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false }
+      });
+    } catch (innerErr) {
+      // Fallback: many browsers/devices reject combined audio+video display capture
+      captureAudio = false;
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: { ideal: 30, max: 30 }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+      });
+    }
+
+    localScreenStream = stream;
+    $('btnShare').classList.add('active-blue');
+    $('screenShareContainer').style.display = 'block';
+    $('screenShareVideo').srcObject = localScreenStream;
+    $('presentingBar').classList.add('show');
+
+    localScreenStream.getVideoTracks()[0].onended = stopScreenShare;
+
+    for (let pid in peers) {
+      const call = myPeer.call(pid, localScreenStream, { metadata: { type: 'screen' } });
+      screenCalls[pid] = call;
+      boostVideoBitrate(call);
+    }
+
+    toast(`Screen sharing started${captureAudio ? ' with audio' : ''}`, 'success');
+    vibe([50, 100, 50]);
+  } catch (e) {
+    if (e && e.name === 'NotAllowedError') {
+      toast('Screen share permission was denied.', 'error');
+    } else if (e && e.name === 'NotFoundError') {
+      toast('No screen source is available to share.', 'error');
+    } else {
+      toast('Could not start screen sharing on this device.', 'error');
+    }
   }
 };
+
+function stopScreenShare() {
+  if (!localScreenStream) return;
+  localScreenStream.getTracks().forEach(t => t.stop());
+  localScreenStream = null;
+  $('btnShare').classList.remove('active-blue');
+  $('screenShareContainer').style.display = 'none';
+  $('presentingBar').classList.remove('show');
+  for (let pid in screenCalls) { try { screenCalls[pid].close(); } catch(e){} }
+  screenCalls = {};
+  toast('Screen sharing stopped');
+}
+
+$('btnStopPresenting').onclick = stopScreenShare;
+
+$('btnFullscreenShare').onclick = () => {
+  const vid = $('screenShareVideo');
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else if (vid.requestFullscreen) {
+    vid.requestFullscreen().catch(() => toast('Fullscreen not supported on this device', 'warn'));
+  } else {
+    toast('Fullscreen not supported on this device', 'warn');
+  }
+};
+
+if (!SCREEN_SHARE_SUPPORTED) {
+  $('btnShare').classList.add('unsupported');
+  $('btnShare').title = 'Screen sharing is not supported on this browser/device';
+}
+
+// ── Recording quality helper ──
+function pickRecorderMime() {
+  const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/ogg'];
+  for (const c of candidates) {
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c)) return c;
+  }
+  return '';
+}
 
 // Host Only Recording
 $('btnRecord').onclick = () => {
@@ -1073,6 +1443,8 @@ $('btnRecord').onclick = () => {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     mediaRecorder.stop();
     $('btnRecord').classList.remove('active-record');
+    $('btnRecordIcon').textContent = '⏺️';
+    $('btnRecordLabel').textContent = 'Start Recording';
     toast('Recording saved successfully', 'success');
     return;
   }
@@ -1092,10 +1464,14 @@ $('btnRecord').onclick = () => {
       }
     }
     
-    mediaRecorder = new MediaRecorder(audioDestNode.stream);
+    const mime = pickRecorderMime();
+    const recorderOpts = { audioBitsPerSecond: 128000 };
+    if (mime) recorderOpts.mimeType = mime;
+
+    mediaRecorder = new MediaRecorder(audioDestNode.stream, recorderOpts);
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
     mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+      const blob = new Blob(recordedChunks, { type: mime || 'audio/webm' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; 
@@ -1109,8 +1485,10 @@ $('btnRecord').onclick = () => {
     
     mediaRecorder.start();
     $('btnRecord').classList.add('active-record');
+    $('btnRecordIcon').textContent = '⏹️';
+    $('btnRecordLabel').textContent = 'Stop Recording';
     vibe([50, 100, 50]);
-    toast('Recording started... (Audio Only)', 'success');
+    toast('Recording started in high quality audio (128kbps)', 'success');
   } catch (e) {
     toast('Recording failed. Not supported.', 'error');
   }
@@ -1120,7 +1498,7 @@ $('btnRecord').onclick = () => {
 $('btnCancelWait').onclick = resetApp;
 
 $('btnLeavePrompt').onclick = () => {
-  $('overlayLeave').classList.remove('hidden');
+  openOverlay('overlayLeave');
   if(isHost) {
     $('hostEndMeetingOption').style.display = 'flex';
   } else {
@@ -1128,10 +1506,10 @@ $('btnLeavePrompt').onclick = () => {
   }
 };
 
-$('btnCancelLeave').onclick = () => $('overlayLeave').classList.add('hidden');
+$('btnCancelLeave').onclick = () => closeOverlay('overlayLeave');
 
 $('btnConfirmLeave').onclick = () => {
-  $('overlayLeave').classList.add('hidden');
+  closeOverlay('overlayLeave');
   
   if(isHost && $('checkEndForAll').checked) {
     broadcast({ type: 'host_end_all' });
@@ -1147,7 +1525,7 @@ function resetApp() {
   clearInterval(durationInterval);
   clearInterval(waitInterval);
   if(mediaRecorder && mediaRecorder.state === 'recording') $('btnRecord').click();
-  if(localScreenStream) $('btnShare').click();
+  if(localScreenStream) stopScreenShare();
   
   for (const pid of Object.keys(peers)) removePeer(pid);
   if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
@@ -1155,7 +1533,7 @@ function resetApp() {
   
   document.querySelectorAll('audio[id^="audio-"]').forEach(el=>el.remove());
   
-  myCode=null; roomCode=null; meetingCode=''; isHost=false; isBusy=false; unreadCount=0; roomEntered=false;
+  myCode=null; roomCode=null; meetingCode=''; isHost=false; myIsCoHost=false; isBusy=false; unreadCount=0; roomEntered=false;
   
   $('chatMessages').innerHTML='<div style="text-align:center; color:var(--muted); font-size:12px; margin-top:20px;">Messages are not saved after call.</div>';
   $('btnMute').classList.remove('active-red');
@@ -1163,6 +1541,12 @@ function resetApp() {
   isMuted = false;
   
   ['panelParticipants', 'panelChat', 'panelDetails'].forEach(p => $(p).classList.remove('open'));
+  $('panelBackdrop').classList.remove('show');
+  $('moreMenu').classList.remove('open');
+  document.querySelectorAll('.part-actions.open').forEach(m => m.classList.remove('open'));
+  $('btnRecordIcon').textContent = '⏺️';
+  $('btnRecordLabel').textContent = 'Start Recording';
+  $('btnMuteAll').style.display = 'none';
   
   setStatus('welcome','Welcome 👋');
   showScreen('home');
@@ -1212,5 +1596,4 @@ setStatus('welcome','Welcome 👋');
 </script>
 </body>
 </html>
-
 
