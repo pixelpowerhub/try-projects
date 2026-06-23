@@ -1,0 +1,150 @@
+/* =========================================
+   FILE ENCRYPTOR & DECRYPTOR SPECIFIC STYLES
+   ========================================= */
+
+/* Privacy Note Box */
+.privacy-note {
+    background-color: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: #166534;
+}
+
+/* Vault Step Animations */
+.vault-step {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* File Input & Labels */
+.file-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #334155;
+}
+
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #f1f5f9;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.status-text {
+    margin: 10px 0;
+    font-size: 0.9rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Input Layout Grids */
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.input-single {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.vault-step input[type="text"],
+.vault-step input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Hint Drawer */
+#hint-drawer {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.hint-item {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.hint-text {
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+/* Multi-File List UI */
+.file-list-container {
+    margin-top: 15px;
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fff;
+    transition: border 0.3s ease;
+}
+
+.file-list-container.drag-over {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-remove {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-add-more {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #f1f5f9;
+    color: #2563eb;
+    border: 2px dashed #2563eb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Responsive Grid */
+@media (max-width: 600px) {
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+}

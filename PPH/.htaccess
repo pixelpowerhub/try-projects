@@ -1,0 +1,60 @@
+# Turn on the Rewriting Engine
+RewriteEngine On
+
+# 1. Force HTTPS (Standard for Hosting Raja)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Redirect /index.html to the root (/)
+# This ensures pixelpowerhub.in/index.html becomes pixelpowerhub.in
+RewriteCond %{THE_REQUEST} /index\.html [NC]
+RewriteRule ^(.*)index\.html$ /$1 [L,R=301]
+
+# 3. Handle Clean URLs (Remove .html extension)
+# If a user types /about, the server looks for about.html internally
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)$ $1.html [NC,L]
+
+# 4. Define the 404 Error Page
+# When a link is invalid, show the content of /404/index.html
+ErrorDocument 404 /404/
+
+# 5. Directory Index
+# Ensures that pixelpowerhub.in/about/ loads the index.html inside it
+DirectoryIndex index.html
+
+# ======================================================
+# 6. SECURITY HEADERS
+# ======================================================
+<IfModule mod_headers.c>
+  # Force HTTPS for one year, including subdomains
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Prevent MIME-type sniffing
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Disallow embedding this site in a frame on another site (clickjacking protection)
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Limit how much referrer information is sent to other sites
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Restrict access to sensitive browser features by default
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+  # Content Security Policy — allows the Google Analytics / AdSense scripts
+  # this site already loads, plus the Google Fonts / CDN assets used by
+  # individual tool pages. Adjust if new third-party scripts are added.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com; frame-src https://googleads.g.doubleclick.net; object-src 'none'; base-uri 'self'"
+</IfModule>
+
+# ======================================================
+# 7. BASIC SPAM / HOTLINK PROTECTION
+# ======================================================
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https://(www\.)?pixelpowerhub\.in/ [NC]
+  RewriteRule \.(gif|jpe?g|png|webp)$ - [F,NC]
+</IfModule>
+

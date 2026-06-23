@@ -1,0 +1,49 @@
+/* ======================================================
+   TERMS.CSS – TERMS PAGE ONLY
+====================================================== */
+
+.terms-page {
+  max-width: 900px;
+}
+
+/* Card wrapper */
+.terms-card {
+  background-color: var(--bg-surface);
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* Headings */
+.terms-content h2 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  font-size: 1.15rem;
+}
+
+/* Paragraphs */
+.terms-content p {
+  margin-bottom: 14px;
+}
+
+/* Effective date */
+.effective-date {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* Contact highlight */
+.contact-info {
+  margin-top: 48px;
+  padding: 28px;
+  background-color: var(--bg-page);
+  border-left: 5px solid var(--primary);
+  border-radius: 14px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .terms-card {
+    padding: 28px;
+  }
+}

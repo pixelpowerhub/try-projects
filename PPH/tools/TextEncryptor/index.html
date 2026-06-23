@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Text Encryptor &amp; Decryptor — Pixel Power Hub</title>
+<!-- COMMON SITE STYLES -->
+<link href="../../assets/css/common.css" rel="stylesheet"/>
+<!-- COMMON TOOL STYLES -->
+<link href="../tools-common.css" rel="stylesheet"/>
+<!-- TOOL-SPECIFIC STYLES -->
+<link href="text-encryptor.css" rel="stylesheet"/>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99M42DBHR6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-99M42DBHR6');
+</script>
+<script async="" crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5034400075369858"></script>
+<meta content="Encrypt and decrypt text using Caesar Cipher, ROT13, Atbash, and Base64 methods with Pixel Power Hub's free Text Encryptor." name="description"/><link href="https://pixelpowerhub.in/tools/TextEncryptor/" rel="canonical"/><meta content="Text Encryptor &amp; Decryptor — Pixel Power Hub" property="og:title"/><meta content="Encrypt and decrypt text using Caesar Cipher, ROT13, Atbash, and Base64 methods with Pixel Power Hub's free Text Encryptor." property="og:description"/><meta content="website" property="og:type"/><meta content="https://pixelpowerhub.in/tools/TextEncryptor/" property="og:url"/><meta content="Pixel Power Hub" property="og:site_name"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" property="og:image"/><meta content="summary" name="twitter:card"/><meta content="Text Encryptor &amp; Decryptor — Pixel Power Hub" name="twitter:title"/><meta content="Encrypt and decrypt text using Caesar Cipher, ROT13, Atbash, and Base64 methods with Pixel Power Hub's free Text Encryptor." name="twitter:description"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" name="twitter:image"/></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a>
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+<div class="container">
+<div class="site-logo">
+<a href="../../index.html">
+<img alt="Pixel Power Hub Logo" src="../../assets/images/logo.png"/>
+</a>
+</div>
+<div class="site-title">
+<h1>Text Encryptor &amp; Decryptor</h1>
+<p>Encrypt, decrypt, and protect your text instantly</p>
+</div>
+<button aria-pressed="false" class="theme-toggle" id="theme-toggle-btn" type="button">🌙 Dark mode</button></div>
+</header>
+<!-- ================= NAV ================= -->
+<nav aria-label="Main navigation" class="site-nav">
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+</nav>
+<!-- ================= MAIN ================= -->
+<main class="site-main" id="main-content">
+<div class="container tool-page">
+<!-- INSTRUCTIONS -->
+<section class="tool-instructions">
+<h2>How to use Text Encryptor &amp; Decryptor</h2>
+<ol>
+<li>Enter or upload your text content.</li>
+<li>Select an encryption method (Caesar, ROT13, Base64, etc.) from the dropdown.</li>
+<li>Click <strong>Encrypt</strong> or <strong>Decrypt</strong>.</li>
+<li>Copy or export the result as a text file if needed.</li>
+</ol>
+</section>
+<!-- TOOL CARD -->
+<section class="tool-card">
+<input accept=".txt" id="fileInput" type="file"/>
+<textarea aria-label="Input text" id="inputText" placeholder="Paste your text here..."></textarea>
+<div class="controls">
+<select aria-label="Encryption method" id="methodSelect">
+<option value="caesar">Caesar Cipher (Shift 13)</option>
+<option value="rot13">ROT13</option>
+<option value="atbash">Atbash Cipher</option>
+<option value="base64">Base64 Encoding</option>
+<option value="reverse">Text Reverse</option>
+</select>
+</div>
+<div class="btn-group">
+<button class="btn-primary" onclick="handleProcess('encrypt')">Encrypt</button>
+<button class="btn-primary" onclick="handleProcess('decrypt')">Decrypt</button>
+</div>
+<div class="alert" id="alertBox" role="alert"></div>
+<pre id="outputText" tabindex="0">Your result will appear here...</pre>
+<div class="btn-group" style="margin-top: 20px;">
+<button class="btn-secondary" disabled="" id="copyBtn" onclick="copyText()">
+          Copy Result
+        </button>
+<button class="btn-success" disabled="" id="exportBtn" onclick="openModal()">
+          Export .txt
+        </button>
+</div>
+</section>
+</div>
+</main>
+<!-- ================= EXPORT MODAL ================= -->
+<div aria-modal="true" class="modal" id="exportModal" role="dialog">
+<div class="modal-content">
+<h3>Export File</h3>
+<p>Enter filename:</p>
+<input class="modal-input" id="fileNameInput" type="text" value="encrypted_text.txt"/>
+<div class="btn-group">
+<button class="btn-success" onclick="exportTxt()">Download</button>
+<button class="btn-secondary" onclick="closeModal()">Cancel</button>
+</div>
+</div>
+</div>
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+<div class="container">
+<nav aria-label="Footer navigation">
+<h3>Quick Links</h3>
+<ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul>
+<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li></ul>
+</nav>
+<p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
+</div>
+</footer>
+<!-- TOOL JS (UNCHANGED) -->
+<script src="text-encryptor.js"></script>
+<script src="../../assets/js/theme.js"></script></body>
+</html>

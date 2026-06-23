@@ -1,0 +1,125 @@
+/* ======================================================
+   BLOGS.CSS – BLOGS PAGE ONLY
+====================================================== */
+
+.blogs-page {
+  max-width: 1100px;
+}
+
+/* Intro */
+.blogs-intro {
+  margin-bottom: 36px;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   BLOG GRID
+=================================*/
+
+.blogs-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  margin-top: 40px;
+}
+
+/* Blog Card */
+.blog-card {
+  background-color: var(--bg-surface);
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.blog-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.blog-card p {
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+/* Blog Date */
+.blog-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* Read More Button */
+.read-more {
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   EMPTY STATE
+=================================*/
+
+.blogs-empty {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.empty-card {
+  background-color: var(--bg-surface);
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  text-align: center;
+  max-width: 520px;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.empty-card h2 {
+  margin-bottom: 12px;
+}
+
+.empty-card p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background-color: rgba(37, 99, 235, 0.1);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+/* ===============================
+   RESPONSIVE
+=================================*/
+
+@media (max-width: 600px) {
+  .blog-card {
+    padding: 22px;
+  }
+
+  .empty-card {
+    padding: 28px;
+  }
+}

@@ -1,0 +1,114 @@
+/* ======================================================
+   BLOG-POST.CSS – INDIVIDUAL BLOG PAGE STYLES
+   (Works alongside common.css)
+====================================================== */
+
+/* Blog Container Width */
+.blog-post {
+  max-width: 760px;
+}
+
+/* Blog Header */
+.blog-header {
+  margin-bottom: 32px;
+}
+
+.blog-header h1 {
+  font-size: 2rem;
+  line-height: 1.35;
+  margin-bottom: 10px;
+}
+
+.blog-meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Article Spacing */
+.blog-post article {
+  margin-bottom: 48px;
+}
+
+/* Section Spacing */
+.blog-post section {
+  margin-bottom: 42px;
+}
+
+/* Paragraph Styling */
+.blog-post p {
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+
+/* Headings Inside Blog */
+.blog-post h2 {
+  font-size: 1.5rem;
+  margin-top: 28px;
+  margin-bottom: 14px;
+}
+
+.blog-post h3 {
+  font-size: 1.15rem;
+  margin-top: 22px;
+  margin-bottom: 12px;
+}
+
+/* Lists */
+.blog-post ul {
+  margin: 16px 0 20px 20px;
+  padding-left: 10px;
+}
+
+.blog-post li {
+  margin-bottom: 8px;
+  line-height: 1.7;
+}
+
+/* Strong text */
+.blog-post strong {
+  font-weight: 600;
+}
+
+/* Back to Blogs Link */
+.back-to-blogs {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.back-to-blogs a {
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.back-to-blogs a:hover {
+  text-decoration: underline;
+}
+
+/* Improve readability on larger screens */
+@media (min-width: 1024px) {
+  .blog-post {
+    max-width: 820px;
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  .blog-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .blog-post p {
+    font-size: 0.95rem;
+  }
+
+  .blog-post h2 {
+    font-size: 1.3rem;
+  }
+
+  .blog-post h3 {
+    font-size: 1.05rem;
+  }
+}

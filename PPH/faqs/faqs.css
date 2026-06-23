@@ -1,0 +1,56 @@
+/* ======================================================
+   FAQS.CSS – FAQ PAGE ONLY
+====================================================== */
+
+.faq-page {
+  max-width: 900px;
+}
+
+/* Page header spacing handled by common.css */
+
+/* FAQ categories */
+.faq-category {
+  margin-bottom: 56px;
+}
+
+.faq-category h2 {
+  margin-bottom: 24px;
+}
+
+/* FAQ item card */
+.faq-item {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+/* Question */
+.faq-item h3 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+/* Text */
+.faq-item p,
+.faq-item ul {
+  color: var(--text-muted);
+}
+
+/* List */
+.faq-item ul {
+  margin: 10px 0 10px 20px;
+}
+
+/* Subtle hover (non-distracting) */
+.faq-item:hover {
+  border-color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .faq-item {
+    padding: 18px;
+  }
+}

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pixel Power Hub - Google Workspace Daily Essentials</title>
+<style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #bb86fc;
+            --button-primary: #3700b3;
+            --button-hover: #5600e8;
+            --success: #03dac6;
+            --error: #cf6679;
+            --border-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        h1, h2, h3 { color: var(--text-primary); margin-top: 0; }
+        h1 { font-size: 2rem; text-align: center; color: var(--accent-color); }
+        h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-bottom: 20px; }
+        p { color: var(--text-secondary); margin-bottom: 15px; }
+        ul { color: var(--text-secondary); padding-left: 20px; margin-bottom: 20px; }
+        li { margin-bottom: 8px; }
+
+        .btn {
+            background-color: var(--button-primary);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover { background-color: var(--button-hover); }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { background-color: #444; cursor: not-allowed; opacity: 0.7; }
+        
+        .btn-small {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background-color: var(--accent-color);
+            color: black;
+        }
+
+        .form-group { margin-bottom: 25px; position: relative; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--accent-color); font-size: 1rem; }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            background-color: #2c2c2c;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        input:disabled, select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: var(--success);
+            background-color: #1a2a2a;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #252525;
+            border-radius: 8px;
+        }
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: var(--accent-color);
+            margin-top: 2px;
+        }
+        .checkbox-label { color: var(--text-primary); font-size: 1rem; margin: 0; font-weight: normal; cursor: pointer; }
+
+        .hidden { display: none !important; }
+        
+        .status-message {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            color: var(--accent-color);
+        }
+
+        .info-box {
+            background-color: rgba(3, 218, 198, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: rgba(207, 102, 121, 0.1);
+            border-left: 4px solid var(--error);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        /* Countdown Timer Styles */
+        #countdown-container {
+            text-align: center;
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-color);
+            margin: 30px 0;
+        }
+        .timer-title { font-size: 1rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .timer-display { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: var(--success); 
+            font-family: monospace;
+        }
+
+        #closed-message {
+            text-align: center;
+            padding: 40px;
+        }
+        .closed-icon { font-size: 4rem; margin-bottom: 20px; display: block; }
+        
+        /* Screen Reader Only Class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Guidelines Accordion */
+        .guidelines-container {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .guideline-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .guideline-item:last-child { border-bottom: none; }
+        .guideline-header {
+            width: 100%;
+            background: #252525;
+            border: none;
+            color: var(--text-primary);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .guideline-header:hover { background: #2e2e2e; }
+        .guideline-header[aria-expanded="true"] { color: var(--accent-color); background: #2a2a3a; }
+        .guideline-icon { font-size: 1.2rem; font-weight: 300; flex-shrink: 0; margin-left: 10px; }
+        .guideline-body {
+            padding: 14px 16px;
+            background: #1c1c1c;
+        }
+        .guideline-body ul { margin: 0; padding-left: 18px; }
+        .guideline-body li { color: var(--text-secondary); margin-bottom: 8px; font-size: 0.9rem; line-height: 1.5; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.6rem; }
+            .timer-display { font-size: 1.4rem; }
+        }
+    </style>
+<meta content="A free, beginner-friendly course covering the Google Workspace essentials you use every day — Gmail, Docs, Drive, and more." name="description"/><link href="https://pixelpowerhub.in/courses/google-workspace-course" rel="canonical"/><meta content="Pixel Power Hub - Google Workspace Daily Essentials" property="og:title"/><meta content="A free, beginner-friendly course covering the Google Workspace essentials you use every day — Gmail, Docs, Drive, and more." property="og:description"/><meta content="website" property="og:type"/><meta content="https://pixelpowerhub.in/courses/google-workspace-course" property="og:url"/><meta content="Pixel Power Hub" property="og:site_name"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" property="og:image"/><meta content="summary" name="twitter:card"/><meta content="Pixel Power Hub - Google Workspace Daily Essentials" name="twitter:title"/><meta content="A free, beginner-friendly course covering the Google Workspace essentials you use every day — Gmail, Docs, Drive, and more." name="twitter:description"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" name="twitter:image"/></head>
+<body>
+<div class="container" role="main">
+<!-- CLOSED MESSAGE (Hidden by default) -->
+<div class="hidden" id="closed-message" role="alert">
+<span class="closed-icon">🚫</span>
+<h2 style="color: var(--error); border: none;">Registration is Closed</h2>
+<p>We are sorry, but the registration period for this course has ended.</p>
+</div>
+<!-- STEP 1: WELCOME SCREEN (Article Content) -->
+<div id="step-welcome">
+<header>
+<h1>Pixel Power Hub</h1>
+<h2 style="text-align: center; border: none; color: var(--text-primary);">Google Workspace Daily Essentials</h2>
+<div class="info-box">
+<strong>Course Fee:</strong> ₹99 only | <strong>Duration:</strong> 14 Lectures
+                </div>
+</header>
+<article>
+<h3>Streamline your daily tasks and master the Google apps you use every day!</h3>
+<p>Pixel Power Hub presents an intensive 14-lecture evening program to help you master Google Workspace for seamless productivity.</p>
+<h3 style="color: var(--accent-color);">What You Will Learn</h3>
+<ul>
+<li><strong>Module 1 – Communication Basics:</strong> Master Gmail, Google Calendar, Meet, and Chat for seamless scheduling and team communication.</li>
+<li><strong>Module 2 – Document Creation &amp; Storage:</strong> Organize, create, and collaborate using Google Drive, Docs, Sheets, and Slides.</li>
+<li><strong>Module 3 – Organization &amp; Feedback:</strong> Stay on track and collect data effortlessly with Google Keep, Tasks, and Forms.</li>
+<li><strong>Module 4 – Everyday Utilities:</strong> Navigate, secure devices, and research efficiently using Google Maps, Find My Device, and NotebookLM.</li>
+</ul>
+<p><strong>Schedule:</strong> Mon-Fri, 09:00 PM – 10:00 PM IST via Zoom. Starts Monday, May 18, 2026.</p>
+</article>
+<!-- REGISTRATION TIMER -->
+<!-- BUG FIX: Removed aria-live="polite" to stop continuous reading -->
+<div id="countdown-container">
+<div class="timer-title">Registration Closes In:</div>
+<!-- Added aria-hidden to visual timer to prevent partial reading, used label instead if needed, but keeping it simple so it is explorable but not auto-announcing -->
+<div class="timer-display" id="timer-display">Loading...</div>
+<!-- Static text for Screen Readers to know the deadline without hearing ticking -->
+<p class="sr-only">Registration closes on May 17, 2026.</p>
+</div>
+<button aria-label="Proceed to Registration Terms" class="btn" id="start-btn" onclick="goToStep('step-terms')">Let's Start Registration</button>
+</div>
+<!-- STEP 2: TERMS AND CONDITIONS -->
+<div class="hidden" id="step-terms">
+<h2>Course Guidelines &amp; Terms</h2>
+<div class="warning-box">
+<strong>Important Instructions:</strong>
+<ul>
+<li>You will be redirected to WhatsApp to submit your details.</li>
+<li><strong>Refund Policy:</strong> You can request a refund within <strong>24 hours</strong> of making the payment.</li>
+<li>Payment screenshot is mandatory.</li>
+</ul>
+</div>
+<p style="color: var(--text-secondary); font-size: 0.95rem;">Please read all guidelines carefully before registering.</p>
+<!-- Guidelines Accordion -->
+<div class="guidelines-container">
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>1. Ownership &amp; Intellectual Property</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>All materials, documents, resources, and content shared by Pixel Power Hub are the exclusive property of Pixel Power Hub.</li>
+<li>Course materials are provided strictly for personal learning purposes and must not be copied, reproduced, distributed, or shared with any third party.</li>
+<li>If a user is found sharing Pixel Power Hub course materials with others, disciplinary action may be taken, including immediate removal from the course.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>2. Use of Course Materials</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>Learners must use course materials responsibly and only for their own educational use.</li>
+<li>Users must keep all shared resources private and must not forward, upload, or distribute them through any platform.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>3. Account, Email &amp; Access Requests</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>When registering, users must carefully enter their correct email address to ensure proper delivery of course updates and materials.</li>
+<li>Requests for course materials must be made using the same email address used during registration.</li>
+<li>If a request is made from a different email address, the user must immediately inform the Pixel Power Hub team for verification.</li>
+<li>Users are permitted to request course access using only one account. Requests from multiple accounts may lead to disciplinary action.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>4. Course Content, Platform &amp; Schedule Changes</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>Pixel Power Hub reserves the full right to modify, update, replace, or remove any course material at any time.</li>
+<li>Course platforms mentioned in course descriptions may be changed before the course begins if required.</li>
+<li>Pixel Power Hub may also modify course schedules, duration, or session timing if necessary.</li>
+<li>If any schedule or timing change occurs, users will be informed at least <strong>24 hours</strong> in advance.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>5. Payment &amp; Refund Policy</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>Course fees must be paid exactly as mentioned in the official course information.</li>
+<li>If any discount or promotional offer is available, it will be clearly mentioned. Otherwise, the listed course fee is final.</li>
+<li>Course fees are refundable within <strong>24 hours</strong> of payment.</li>
+<li>If a learner decides not to continue, they must contact Pixel Power Hub within 24 hours of payment.</li>
+<li>After 24 hours from the time of payment, refunds will not be issued.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>6. Free Course Policy</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>If a course is offered as a free course, all topics mentioned in the course description will still be covered.</li>
+<li>Free courses may not include recorded sessions or downloadable recording materials.</li>
+<li>Support, assistance, or additional resources in free courses may be limited compared to paid courses.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>7. Guideline Flexibility &amp; Authority</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>Pixel Power Hub reserves the right to modify, update, remove, or adjust these guidelines if circumstances change.</li>
+<li>These changes may occur even after course announcements or before the course begins.</li>
+<li>All participants agree that Pixel Power Hub holds the authority to make necessary adjustments to course policies when required.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>8. Applicability of Guidelines</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>These guidelines apply to both free and paid courses conducted by Pixel Power Hub.</li>
+<li>If a course is free, payment-related guidelines will not apply.</li>
+<li>If a course is paid, all guidelines mentioned in this document will apply.</li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>9. Contact &amp; Support</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>If you have questions regarding these guidelines or any course-related matter, you may contact the Pixel Power Hub team using the contact options provided in the registration form.</li>
+<li>You may also contact the team through the official website: <strong>www.pixelpowerhub.in</strong></li>
+</ul>
+</div>
+</div>
+<div class="guideline-item">
+<button aria-expanded="false" class="guideline-header" onclick="toggleGuideline(this)">
+<span>10. Acceptance of Guidelines</span>
+<span class="guideline-icon">＋</span>
+</button>
+<div class="guideline-body hidden">
+<ul>
+<li>If you do not agree with these guidelines, you may choose not to proceed with the course registration or participation.</li>
+</ul>
+</div>
+</div>
+</div><!-- end guidelines-container -->
+<div class="checkbox-wrapper" style="margin-top: 25px;">
+<input id="agreeCheckbox" onchange="handleAgreement()" type="checkbox"/>
+<label class="checkbox-label" for="agreeCheckbox">I have read and agree to all the Course Guidelines, Payment Terms, and Refund Policy of Pixel Power Hub.</label>
+</div>
+<div aria-live="polite" class="status-message hidden" id="loading-timer">
+                Getting the form ready... <span id="timer-count">3</span>s
+            </div>
+</div>
+<!-- STEP 3: REGISTRATION FORM -->
+<form class="hidden" id="step-form">
+<h2>Registration Details</h2>
+<p>Please fill in your details carefully. All fields are required.</p>
+<!-- Personal Info -->
+<div class="form-group">
+<label for="fullName">Full Name</label>
+<input autocomplete="name" id="fullName" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="email">Email Address</label>
+<input autocomplete="email" id="email" required="" type="email"/>
+</div>
+<div class="form-group">
+<label for="phone">Phone Number (WhatsApp)</label>
+<input autocomplete="tel" id="phone" required="" type="tel"/>
+</div>
+<div class="form-group">
+<label for="age">Age</label>
+<input id="age" max="100" min="10" required="" type="number"/>
+</div>
+<!-- Location with Auto-Fill -->
+<div class="form-group">
+<label>Location Details</label>
+<button class="btn btn-small" id="loc-btn" onclick="fetchLocation()" type="button">
+                    📍 Auto-Fill Location (GPS)
+                </button>
+<p style="font-size: 0.8rem; margin-top: 5px;">*Please allow up to 30 seconds for location detection.</p>
+<span id="loc-status" role="status" style="font-size: 0.9rem; color: var(--success);"></span>
+</div>
+<div class="form-group">
+<label for="country">Country</label>
+<input id="country" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="state">State</label>
+<input id="state" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="city">City</label>
+<input id="city" required="" type="text"/>
+</div>
+<!-- Preferred Device Type -->
+<div class="form-group">
+<label for="deviceType">Preferred Device Type for Learning</label>
+<select id="deviceType" required="">
+<option disabled="" selected="" value="">Select Device Type</option>
+<option value="Android">Android</option>
+<option value="Windows">Windows</option>
+<option value="Both Android and Windows">Both Android and Windows</option>
+</select>
+</div>
+<!-- Demographics -->
+<div class="form-group">
+<label for="gender">Gender</label>
+<select id="gender" required="">
+<option disabled="" selected="" value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+<option value="Other">Other</option>
+<option value="Prefer not to say">Prefer not to say</option>
+</select>
+</div>
+<div class="form-group">
+<label for="disability">Disability Type</label>
+<select id="disability" onchange="toggleDisabilityDesc()" required="">
+<option disabled="" selected="" value="">Select Type</option>
+<option value="Totally Blind">Totally Blind</option>
+<option value="Low Vision">Low Vision</option>
+<option value="Physical Disability">Physical Disability</option>
+<option value="Hearing Impairment">Hearing Impairment</option>
+<option value="Other">Other Disability</option>
+<option value="No Disability">No Disability</option>
+</select>
+</div>
+<div class="form-group hidden" id="disability-desc-group">
+<label for="disabilityDesc">Please describe your disability</label>
+<textarea id="disabilityDesc" rows="2"></textarea>
+</div>
+<!-- Feedback Permission -->
+<div class="checkbox-wrapper" style="margin-top: 30px; border: 1px solid var(--accent-color);">
+<input id="feedbackCheck" type="checkbox"/>
+<label class="checkbox-label" for="feedbackCheck">
+<strong>Optional:</strong> I allow Pixel Power Hub team to contact me for feedback regarding this form's accessibility and design.
+                </label>
+</div>
+<button class="btn" onclick="submitForm()" type="button">Submit Registration via WhatsApp</button>
+</form>
+</div>
+<script>
+        // --- ACCORDION LOGIC ---
+        function toggleGuideline(btn) {
+            const body = btn.nextElementSibling;
+            const icon = btn.querySelector('.guideline-icon');
+            const isOpen = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', !isOpen);
+            body.classList.toggle('hidden', isOpen);
+            icon.textContent = isOpen ? '＋' : '－';
+        }
+
+        // --- DISABILITY DESCRIPTION TOGGLE ---
+        function toggleDisabilityDesc() {
+            const select = document.getElementById('disability');
+            const group = document.getElementById('disability-desc-group');
+            const textarea = document.getElementById('disabilityDesc');
+            if (select.value === 'Other') {
+                group.classList.remove('hidden');
+                textarea.setAttribute('required', 'true');
+            } else {
+                group.classList.add('hidden');
+                textarea.removeAttribute('required');
+                textarea.value = '';
+            }
+        }
+
+        // --- CONFIGURATION ---
+        // I have set this to 2026 so you can test the form features.
+        // To test the "Closed" state, change 2026 to 2020.
+        const REGISTRATION_DEADLINE = new Date('May 17, 2026 23:59:59');
+        
+        // --- TIMER LOGIC ---
+        function updateTimer() {
+            const now = new Date();
+            const timeDiff = REGISTRATION_DEADLINE - now;
+
+            if (timeDiff <= 0) {
+                // Time is up!
+                closeRegistration();
+            } else {
+                // Calculate time components
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                document.getElementById('timer-display').textContent = 
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        function closeRegistration() {
+            // Hide welcome content and form
+            document.getElementById('step-welcome').classList.add('hidden');
+            document.getElementById('step-terms').classList.add('hidden');
+            document.getElementById('step-form').classList.add('hidden');
+            
+            // Show closed message
+            const closedMsg = document.getElementById('closed-message');
+            closedMsg.classList.remove('hidden');
+            
+            // Focus on message for screen readers
+            closedMsg.querySelector('h2').focus();
+            
+            // Stop timer
+            clearInterval(timerInterval);
+        }
+
+        // Start Timer immediately
+        const timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Run once immediately
+
+        // --- NAVIGATION LOGIC ---
+        function goToStep(stepId) {
+            // Re-check timer before proceeding
+            if (new Date() > REGISTRATION_DEADLINE) {
+                closeRegistration();
+                return;
+            }
+
+            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(stepId).classList.remove('hidden');
+            
+            // Focus on heading for accessibility
+            const heading = document.getElementById(stepId).querySelector('h1, h2');
+            if(heading) heading.focus();
+        }
+
+        // --- AGREEMENT LOGIC (3 Seconds) ---
+        function handleAgreement() {
+            const checkbox = document.getElementById('agreeCheckbox');
+            const timerBox = document.getElementById('loading-timer');
+            const timerCount = document.getElementById('timer-count');
+
+            if (checkbox.checked) {
+                timerBox.classList.remove('hidden');
+                let timeLeft = 3;
+                timerCount.textContent = timeLeft;
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    timerCount.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        goToStep('step-form');
+                    }
+                }, 1000);
+            }
+        }
+
+        // --- FORM LOGIC ---
+        function toggleDisabilityDesc() {
+            const select = document.getElementById('disability');
+            const group = document.getElementById('disability-desc-group');
+            const textarea = document.getElementById('disabilityDesc');
+
+            if (select.value === 'Other') {
+                group.classList.remove('hidden');
+                textarea.setAttribute('required', 'true');
+            } else {
+                group.classList.add('hidden');
+                textarea.removeAttribute('required');
+                textarea.value = '';
+            }
+        }
+
+        function fetchLocation() {
+            const status = document.getElementById('loc-status');
+            const btn = document.getElementById('loc-btn');
+
+            if (!navigator.geolocation) {
+                status.textContent = "Geolocation is not supported by your browser.";
+                return;
+            }
+
+            status.textContent = "Fetching location... Please wait (up to 30s)...";
+            btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const addr = data.address;
+                            document.getElementById('country').value = addr.country || '';
+                            document.getElementById('state').value = addr.state || addr.region || '';
+                            document.getElementById('city').value = addr.city || addr.town || addr.village || addr.county || '';
+                            
+                            // Disable location fields so user cannot edit them
+                            document.getElementById('country').disabled = true;
+                            document.getElementById('state').disabled = true;
+                            document.getElementById('city').disabled = true;
+                            btn.disabled = true;
+                            
+                            status.textContent = "✅ Location found and filled!";
+                            status.style.color = "#03dac6";
+                        })
+                        .catch(err => {
+                            status.textContent = "Could not fetch address details. Please enter manually.";
+                            status.style.color = "#cf6679";
+                            btn.disabled = false;
+                        });
+                },
+                (error) => {
+                    status.textContent = "Permission denied or timeout. Please enter location manually.";
+                    status.style.color = "#cf6679";
+                    btn.disabled = false;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 30000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function submitForm() {
+            // Re-check timer before submitting
+            if (new Date() > REGISTRATION_DEADLINE) {
+                closeRegistration();
+                return;
+            }
+
+            const form = document.getElementById('step-form');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            for (let input of inputs) {
+                if (input.disabled) continue; // skip auto-filled locked fields
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    input.style.borderColor = '#cf6679';
+                    input.focus();
+                    alert(`Please fill out the ${input.previousElementSibling.innerText} field.`);
+                    return;
+                } else {
+                    input.style.borderColor = '#333';
+                }
+            }
+
+            const name = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const age = document.getElementById('age').value;
+            const location = `${document.getElementById('city').value}, ${document.getElementById('state').value}, ${document.getElementById('country').value}`;
+            const androidVer = document.getElementById('deviceType').value;
+            const brand = '';
+            const gender = document.getElementById('gender').value;
+            
+            let disability = document.getElementById('disability').value;
+            if (disability === 'Other') {
+                disability += ` (${document.getElementById('disabilityDesc').value})`;
+            }
+
+            const feedback = document.getElementById('feedbackCheck').checked ? "YES" : "NO";
+
+            let message = `*Pixel Power Hub - Course Registration* %0A%0A`;
+            message += `*Name:* ${name}%0A`;
+            message += `*Email:* ${email}%0A`;
+            message += `*Phone:* ${phone}%0A`;
+            message += `*Age:* ${age}%0A%0A`;
+            message += `*Location:* ${location}%0A`;
+            message += `*Preferred Device:* ${androidVer}%0A`;
+            message += `*Gender:* ${gender}%0A`;
+            message += `*Disability:* ${disability}%0A%0A`;
+            message += `*Opted for Form Feedback:* ${feedback}%0A`;
+            message += `-----------------------------%0A`;
+            message += `_I agree to the 24-hour refund policy and course terms._`;
+
+            const phoneNumber = "917888350442"; 
+            const url = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>

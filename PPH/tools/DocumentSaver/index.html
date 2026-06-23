@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Saver — Pixel Power Hub</title>
+<meta content="Save text content as a .txt, .md, .html, .json, .xml, .csv, .css, .js, or .rtf file directly in your browser — no installation needed." name="description"/>
+<link href="https://pixelpowerhub.in/tools/DocumentSaver/" rel="canonical"/>
+<!-- COMMON SITE STYLES -->
+<link href="../../assets/css/common.css" rel="stylesheet"/>
+<!-- COMMON TOOL STYLES -->
+<link href="../tools-common.css" rel="stylesheet"/>
+<!-- TOOL-SPECIFIC STYLES -->
+<link href="document-saver.css" rel="stylesheet"/>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99M42DBHR6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-99M42DBHR6');
+</script>
+<script async="" crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5034400075369858"></script>
+<meta content="Document Saver — Pixel Power Hub" property="og:title"/><meta content="Save text content as a .txt, .md, .html, .json, .xml, .csv, .css, .js, or .rtf file directly in your browser with Document Saver." property="og:description"/><meta content="website" property="og:type"/><meta content="https://pixelpowerhub.in/tools/DocumentSaver/" property="og:url"/><meta content="Pixel Power Hub" property="og:site_name"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" property="og:image"/><meta content="summary" name="twitter:card"/><meta content="Document Saver — Pixel Power Hub" name="twitter:title"/><meta content="Save text content as a .txt, .md, .html, .json, .xml, .csv, .css, .js, or .rtf file directly in your browser with Document Saver." name="twitter:description"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" name="twitter:image"/></head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<!-- ================= HEADER ================= -->
+<header class="site-header">
+<div class="container">
+<div class="site-logo">
+<a href="../../index.html">
+<img alt="Pixel Power Hub Logo" src="../../assets/images/logo.png"/>
+</a>
+</div>
+<div class="site-title">
+<h1>Document Saver</h1>
+<p>Save text content as a downloadable file in the format you need</p>
+</div>
+<button aria-pressed="false" class="theme-toggle" id="theme-toggle-btn" type="button">🌙 Dark mode</button></div>
+</header>
+<!-- ================= NAV ================= -->
+<nav aria-label="Main navigation" class="site-nav">
+<div class="container">
+<ul class="nav-list">
+<li><a href="../../index.html">Home</a></li>
+<li><a href="../../about/index.html">About Us</a></li>
+<li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li>
+<li><a href="../../blogs/index.html">Blogs</a></li>
+<li><a href="../../courses/index.html">Courses</a></li>
+<li><a href="../../faqs/index.html">FAQs</a></li>
+<li><a href="../../contact/index.html">Contact Us</a></li>
+</ul>
+</div>
+</nav>
+<!-- ================= MAIN ================= -->
+<main class="site-main" id="main-content">
+<div class="container tool-page">
+<!-- INSTRUCTIONS -->
+<section class="tool-instructions">
+<h2>How to use Document Saver</h2>
+<ol>
+<li>Type or paste the content you want to save into the text box.</li>
+<li>Enter a file name (without an extension — it will be added automatically).</li>
+<li>Choose a file format from the dropdown.</li>
+<li>Click <strong>Save File</strong> to download it to your device.</li>
+</ol>
+</section>
+<!-- TOOL CARD -->
+<section class="tool-card">
+<label for="fileName">File name</label>
+<input autocomplete="off" id="fileName" maxlength="100" placeholder="e.g. my-notes" type="text"/>
+<label for="fileBody" style="margin-top:16px;">File content</label>
+<textarea aria-describedby="fileBody-help" id="fileBody" placeholder="Type or paste your content here..." rows="10"></textarea>
+<p class="field-hint" id="fileBody-help">Up to 500,000 characters. JSON and XML content is checked for valid syntax before saving.</p>
+<label for="fileFormat" style="margin-top:16px;">File format</label>
+<select aria-label="File format" id="fileFormat">
+<option value="txt">Plain Text (.txt)</option>
+<option value="md">Markdown (.md)</option>
+<option value="html">HTML (.html)</option>
+<option value="rtf">Rich Text (.rtf)</option>
+<option value="json">JSON (.json)</option>
+<option value="xml">XML (.xml)</option>
+<option value="css">CSS (.css)</option>
+<option value="js">JavaScript (.js)</option>
+<option value="csv">CSV (.csv)</option>
+</select>
+<div class="actions" style="margin-top:20px;">
+<button class="btn-main" onclick="saveFile()" type="button">Save File</button>
+</div>
+<div aria-live="polite" id="status" role="status"></div>
+<div class="disclaimer-note" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+<p><strong>Note:</strong> Files are generated entirely in your browser and download directly to your device. Nothing you type here is uploaded to or stored on our servers.</p>
+</div>
+</section>
+</div>
+</main>
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+<div class="container">
+<nav aria-label="Footer navigation">
+<h3>Quick Links</h3>
+<ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul>
+<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li></ul>
+</nav>
+<p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
+</div>
+</footer>
+<!-- TOOL JS -->
+<script src="document-saver.js"></script>
+<script src="../../assets/js/theme.js"></script></body>
+</html>

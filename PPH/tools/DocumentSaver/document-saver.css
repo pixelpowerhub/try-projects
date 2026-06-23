@@ -1,0 +1,53 @@
+/* ======================================================
+   DOCUMENT SAVER — Tool-specific styles
+====================================================== */
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+  font-family: monospace;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+button {
+  padding: 14px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.95;
+}
+
+#status {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+}
