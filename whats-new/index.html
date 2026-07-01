@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>What's New — Pixel Power Hub</title>
+<meta content="See the latest updates, fixes, and new features added to Pixel Power Hub, including Math Master improvements and site-wide accessibility upgrades." name="description"/>
+<link href="https://pixelpowerhub.in/whats-new/" rel="canonical"/>
+<meta content="What's New — Pixel Power Hub" property="og:title"/>
+<meta content="See the latest updates, fixes, and new features added to Pixel Power Hub, including Math Master improvements and site-wide accessibility upgrades." property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="https://pixelpowerhub.in/whats-new/" property="og:url"/>
+<meta content="Pixel Power Hub" property="og:site_name"/>
+<meta content="https://pixelpowerhub.in/assets/images/logo.png" property="og:image"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="What's New — Pixel Power Hub" name="twitter:title"/>
+<meta content="See the latest updates, fixes, and new features added to Pixel Power Hub, including Math Master improvements and site-wide accessibility upgrades." name="twitter:description"/>
+<meta content="https://pixelpowerhub.in/assets/images/logo.png" name="twitter:image"/>
+<link href="../assets/css/common.css" rel="stylesheet"/>
+<link href="../about/about.css" rel="stylesheet"/>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99M42DBHR6"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-99M42DBHR6');
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="site-header">
+<div class="container">
+<div class="site-logo">
+<a href="../index.html">
+<img alt="Pixel Power Hub Logo" src="../assets/images/logo.png"/>
+</a>
+</div>
+<div class="site-title">
+<h1>What's New</h1>
+<p>The latest updates, fixes, and features on Pixel Power Hub</p>
+</div>
+</div>
+</header>
+<nav aria-label="Main navigation" class="site-nav">
+<div class="container">
+<ul class="nav-list">
+<li><a href="../index.html">Home</a></li>
+<li><a href="../about/index.html">About Us</a></li>
+<li><a href="../tools/index.html">Tools</a></li>
+<li><a href="../blogs/index.html">Blogs</a></li>
+<li><a href="../courses/index.html">Courses</a></li>
+<li><a href="../faqs/index.html">FAQs</a></li>
+<li><a href="../contact/index.html">Contact Us</a></li>
+</ul>
+</div>
+</nav>
+<main class="site-main" id="main-content">
+<div class="container about-page">
+<article class="about-card">
+<section class="about-intro">
+<p>Here's a running record of what's changed on Pixel Power Hub. New updates appear at the top. If you saw the "What's New" popup once and dismissed it, you can always come back to this page to re-read it.</p>
+</section>
+<section id="whats-new-entries">
+<p class="field-hint">Loading updates…</p>
+</section>
+</article>
+</div>
+</main>
+<footer class="site-footer">
+<div class="container">
+<nav aria-label="Footer navigation">
+<h3>Quick Links</h3>
+<p>
+<a href="../index.html">Home</a> |
+        <a href="../about/index.html">About Us</a> |
+        <a href="../tools/index.html">Tools</a> |
+        <a href="../blogs/index.html">Blogs</a> |
+        <a href="../courses/index.html">Courses</a> |
+        <a href="../faqs/index.html">FAQs</a> |
+        <a href="../contact/index.html">Contact Us</a>
+</p>
+<p>
+<a href="../privacy-policy/index.html">Privacy Policy</a> |
+        <a href="../terms/index.html">Terms &amp; Conditions</a> |
+        <a href="../accessibility/index.html">Accessibility Statement</a> |
+        <a href="../whats-new/index.html">What's New</a>
+</p>
+</nav>
+<p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
+</div>
+</footer>
+<script src="../assets/js/whats-new-data.js"></script>
+<script>
+  (function () {
+    const container = document.getElementById('whats-new-entries');
+    if (typeof WHATS_NEW_ENTRIES === 'undefined' || WHATS_NEW_ENTRIES.length === 0) {
+      container.innerHTML = '<p>No updates recorded yet — check back soon!</p>';
+      return;
+    }
+
+    container.innerHTML = WHATS_NEW_ENTRIES.map((entry, i) => {
+      const itemsHtml = entry.items.map(item => `<li>${item}</li>`).join('');
+      return `
+        <div class="principle-item" style="margin-bottom: 28px;">
+          <h2 style="margin-bottom: 2px;">${entry.version} ${i === 0 ? '<span class="field-hint" style="font-weight:600;">(Latest)</span>' : ''}</h2>
+          <p class="field-hint" style="margin-top:0;">${entry.title} — ${entry.date}</p>
+          <ul style="line-height:1.6; padding-left: 20px;">${itemsHtml}</ul>
+        </div>
+      `;
+    }).join('<hr style="border:none; border-top:1px solid var(--border); margin: 20px 0;">');
+  })();
+</script>
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/whats-new.js"></script></body>
+</html>

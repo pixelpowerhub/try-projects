@@ -1,14 +1,23 @@
 /* ================================
    GREETING + DATE + TIME (INDIA)
    ================================
-   Accessibility fix: the greeting is the only piece announced via
-   aria-live, and it is only re-announced when morning/afternoon/evening
-   actually changes — not every 60 seconds. The date and time are
-   plain (non-live) text so screen reader users aren't interrupted by
-   a tick they didn't ask for, but can still read them on demand.
+   Bug fix: the clock previously called updateHeaderInfo() once on load
+   and then on a naive 60-second interval, so the displayed time looked
+   "frozen" for up to a minute and never showed seconds. It now ticks
+   every second, self-corrects for setInterval drift by re-aligning to
+   the real second boundary, and pauses entirely when the tab is hidden
+   (Page Visibility API) to avoid wasting CPU/battery in background tabs
+   — resuming immediately and resyncing the instant the tab is visible
+   again, so the time is always accurate even after a long pause.
+
+   Accessibility: the greeting (Good Morning / Afternoon / Evening) is
+   the only piece announced via aria-live, and only when the period
+   actually changes — not every second — so screen reader users aren't
+   interrupted by a ticking clock they didn't ask for.
 */
 
 let lastGreetingPeriod = null;
+let clockTimeoutId = null;
 
 function updateHeaderInfo() {
   const now = new Date();
@@ -42,6 +51,7 @@ function updateHeaderInfo() {
     timeZone: 'Asia/Kolkata',
     hour: '2-digit',
     minute: '2-digit',
+    second: '2-digit',
     hour12: true
   });
 
@@ -59,6 +69,40 @@ function updateHeaderInfo() {
   if (dateEl) dateEl.textContent = dateText;
   if (timeEl) timeEl.textContent = timeText;
 }
+
+// Schedules the next tick to land as close as possible to the next real
+// second boundary, instead of drifting via repeated setInterval(1000)
+// calls (each of which can run a few ms late).
+function scheduleNextTick() {
+  clearTimeout(clockTimeoutId);
+  if (document.hidden) return; // paused while tab is in the background
+
+  updateHeaderInfo();
+  const msIntoSecond = Date.now() % 1000;
+  const delay = 1000 - msIntoSecond;
+  clockTimeoutId = setTimeout(scheduleNextTick, delay);
+}
+
+function startClock() {
+  clearTimeout(clockTimeoutId);
+  scheduleNextTick();
+}
+
+function stopClock() {
+  clearTimeout(clockTimeoutId);
+  clockTimeoutId = null;
+}
+
+// Pause the clock in background tabs (saves battery/CPU); resume and
+// resync the instant the tab becomes visible again, so the time shown
+// is never stale.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stopClock();
+  } else {
+    startClock();
+  }
+});
 
 /* ============================================================
    DYNAMIC FEATURED TOOLS (FETCHED FROM DATA)
@@ -110,8 +154,7 @@ function loadFeaturedTools() {
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof updateHeaderInfo === 'function') {
-    updateHeaderInfo();
-    setInterval(updateHeaderInfo, 60000);
+    startClock();
   }
   loadFeaturedTools();
 });

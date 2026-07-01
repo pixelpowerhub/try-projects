@@ -1,17 +1,109 @@
 /* ======================================================
-   MATH-MASTER.JS – FULL CONSOLIDATED ENGINE (v2)
+   MATH-MASTER.JS – FULL CONSOLIDATED ENGINE (v3)
    Features: 3-Chance Learning, Test Penalties, Exit Logic,
-   floating-point-safe answer checking, talking tutor hints.
+   floating-point-safe answer checking, talking tutor hints,
+   Guest / Individual profile system.
 ====================================================== */
+
+// --- Profile system: Guest (this-tab-session only) vs Individual (saved
+// permanently on this device). Both share the same name-entry field; only
+// where the name is stored differs. ---
+const PROFILE_KEY = 'pph-mathmaster-profile';
+const NAME_KEY = 'pph-mathmaster-name';
+
+// Individual -> localStorage (persists across visits/devices-restarts).
+// Guest -> sessionStorage (persists only for this browser tab session;
+// cleared when the tab/browser closes, so the user re-enters their name
+// next time, as requested).
+function storageForProfile(profile) {
+    return profile === 'individual' ? localStorage : sessionStorage;
+}
+
+function loadSavedProfile() {
+    try {
+        const individualProfile = localStorage.getItem(PROFILE_KEY);
+        if (individualProfile === 'individual') {
+            const name = localStorage.getItem(NAME_KEY);
+            if (name) return { profile: 'individual', name };
+        }
+        const guestProfile = sessionStorage.getItem(PROFILE_KEY);
+        if (guestProfile === 'guest') {
+            const name = sessionStorage.getItem(NAME_KEY);
+            if (name) return { profile: 'guest', name };
+        }
+    } catch (e) { /* storage unavailable (e.g. private browsing) — fall back to asking each time */ }
+    return null;
+}
+
+let pendingProfile = null;
+
+function chooseProfile(profile) {
+    pendingProfile = profile;
+    document.getElementById('profile-choice-screen').classList.add('hidden');
+    const nameScreen = document.getElementById('name-screen');
+    nameScreen.classList.remove('hidden');
+
+    const note = document.getElementById('name-screen-note');
+    note.textContent = profile === 'individual'
+        ? "Your name will be saved on this device, so Math Master will greet you automatically next time."
+        : "As a guest, you'll be asked to enter your name again each time you revisit Math Master.";
+
+    document.getElementById('user-name-input').focus();
+}
+
+function updateProfileBar() {
+    const bar = document.getElementById('profile-bar');
+    const nameLabel = document.getElementById('profile-name-label');
+    const modeLabel = document.getElementById('profile-mode-label');
+    if (!bar) return;
+    bar.classList.remove('hidden');
+    nameLabel.textContent = sessionData.userName || 'Add Name';
+    modeLabel.textContent = sessionData.profile === 'individual' ? '(Saved profile)' : '(Guest)';
+}
+
+function openRenameDialog() {
+    const newName = prompt('Enter your name:', sessionData.userName || '');
+    if (newName && newName.trim()) {
+        sessionData.userName = newName.trim();
+        const store = storageForProfile(sessionData.profile || 'guest');
+        try { store.setItem(NAME_KEY, sessionData.userName); } catch (e) { /* storage unavailable */ }
+        const greetingEl = document.getElementById('greeting-h2');
+        if (greetingEl) greetingEl.innerText = `Hello, ${sessionData.userName}!`;
+        updateProfileBar();
+    }
+}
+
+function enterSetup() {
+    document.getElementById('profile-choice-screen').classList.add('hidden');
+    document.getElementById('name-screen').classList.add('hidden');
+    document.getElementById('setup-area').classList.remove('hidden');
+    document.getElementById('greeting-h2').innerText = `Hello, ${sessionData.userName}!`;
+    updateProfileBar();
+}
+
+// Runs on page load: skip straight to setup if a profile was already saved
+// (Individual on this device, or Guest earlier in this same tab session).
+document.addEventListener('DOMContentLoaded', () => {
+    const saved = loadSavedProfile();
+    if (saved) {
+        sessionData.userName = saved.name;
+        sessionData.profile = saved.profile;
+        enterSetup();
+    }
+});
 
 let sessionData = {
     userName: 'Student',
+    profile: 'guest',
     category: '',
     level: 1,
     mode: 'learn',
     totalQuestions: 10,
+    unlimited: false,
     currentQuestionIndex: 0,
     score: 0,
+    correctCount: 0,
+    incorrectCount: 0,
     attempts: 0,
     timerInterval: null,
     timePerQuestion: 30,
@@ -19,6 +111,8 @@ let sessionData = {
     display: '',
     n1: null,
     n2: null,
+    questionStartTime: null,
+    responseTimes: [],
     results: []
 };
 
@@ -34,10 +128,16 @@ function getAudioCtx() {
 function saveName() {
     const nameInput = document.getElementById('user-name-input').value.trim();
     if (nameInput) {
+        const profile = pendingProfile || 'guest';
         sessionData.userName = nameInput;
-        document.getElementById('name-screen').classList.add('hidden');
-        document.getElementById('setup-area').classList.remove('hidden');
-        document.getElementById('greeting-h2').innerText = `Hello, ${sessionData.userName}!`;
+        sessionData.profile = profile;
+
+        try {
+            storageForProfile(profile).setItem(PROFILE_KEY, profile);
+            storageForProfile(profile).setItem(NAME_KEY, nameInput);
+        } catch (e) { /* storage unavailable (private browsing) — session still works, just won't persist */ }
+
+        enterSetup();
     } else {
         document.getElementById('user-name-input').focus();
     }
@@ -86,17 +186,43 @@ function startSession() {
     sessionData.level = clampLevel();
     sessionData.mode = document.getElementById('mode-select').value;
     sessionData.timePerQuestion = parseInt(document.getElementById('timer-select').value, 10) || 30;
+
+    const qCountVal = document.getElementById('question-count-select').value;
+    sessionData.unlimited = qCountVal === 'unlimited';
+    sessionData.totalQuestions = sessionData.unlimited ? Infinity : parseInt(qCountVal, 10);
+
     sessionData.currentQuestionIndex = 0;
     sessionData.score = 0;
+    sessionData.correctCount = 0;
+    sessionData.incorrectCount = 0;
+    sessionData.responseTimes = [];
     sessionData.results = [];
+
+    document.getElementById('total-q-display').innerText = sessionData.unlimited ? '∞' : sessionData.totalQuestions;
 
     document.getElementById('setup-area').classList.add('hidden');
     document.getElementById('practice-area').classList.remove('hidden');
     loadNextQuestion();
 }
 
+function updateLiveStats() {
+    const answered = sessionData.correctCount + sessionData.incorrectCount;
+    const accuracy = answered > 0 ? Math.round((sessionData.correctCount / answered) * 100) : 0;
+    const avgTime = sessionData.responseTimes.length > 0
+        ? Math.round(sessionData.responseTimes.reduce((a, b) => a + b, 0) / sessionData.responseTimes.length)
+        : 0;
+    const remaining = sessionData.unlimited ? '∞' : Math.max(0, sessionData.totalQuestions - sessionData.currentQuestionIndex);
+
+    const accEl = document.getElementById('live-accuracy');
+    const avgEl = document.getElementById('live-avgtime');
+    const remEl = document.getElementById('remaining-q');
+    if (accEl) accEl.innerText = `${accuracy}%`;
+    if (avgEl) avgEl.innerText = `${avgTime}s`;
+    if (remEl) remEl.innerText = remaining;
+}
+
 function loadNextQuestion() {
-    if (sessionData.currentQuestionIndex >= sessionData.totalQuestions) {
+    if (!sessionData.unlimited && sessionData.currentQuestionIndex >= sessionData.totalQuestions) {
         endSession();
         return;
     }
@@ -112,6 +238,9 @@ function loadNextQuestion() {
     sessionData.display = q.display;
     sessionData.n1 = q.n1;
     sessionData.n2 = q.n2;
+    sessionData.questionStartTime = Date.now();
+
+    updateLiveStats();
 
     // aria-live="polite" on #math-display (set in HTML) announces this to
     // screen reader users; speak() additionally reads it aloud for users
@@ -206,11 +335,22 @@ function checkAnswer() {
         }
     }
     document.getElementById('live-score').innerText = sessionData.score;
+    updateLiveStats();
 }
 
 // --- Reporting & Assets ---
 
 function recordResult(ans, isCorrect) {
+    if (isCorrect) {
+        sessionData.correctCount++;
+    } else {
+        sessionData.incorrectCount++;
+    }
+    if (sessionData.questionStartTime) {
+        const elapsedSeconds = (Date.now() - sessionData.questionStartTime) / 1000;
+        sessionData.responseTimes.push(elapsedSeconds);
+        sessionData.questionStartTime = null; // only counted once per question
+    }
     sessionData.results.push({
         q: sessionData.display,
         a: ans,
@@ -300,7 +440,7 @@ function generateCertificate() {
     ctx.font = 'italic bold 35px serif'; ctx.fillStyle = '#2563eb'; ctx.fillText(sessionData.userName, 400, 280);
     ctx.fillStyle = '#1e293b'; ctx.font = '22px sans-serif';
     ctx.fillText(`For completing Level ${sessionData.level} ${sessionData.category}`, 400, 350);
-    ctx.fillText(`With a score of ${Math.max(0, sessionData.score)} out of ${sessionData.totalQuestions}`, 400, 400);
+    ctx.fillText(`With a score of ${Math.max(0, sessionData.score)} out of ${sessionData.unlimited ? (sessionData.correctCount + sessionData.incorrectCount) : sessionData.totalQuestions}`, 400, 400);
 
     const link = document.createElement('a');
     link.download = `MathMaster_${sessionData.userName}.png`;
@@ -308,12 +448,54 @@ function generateCertificate() {
     link.click();
 }
 
-// Global Listener for Enter key inside the answer field (keydown, not the
-// deprecated keypress event)
+// --- Keyboard Shortcuts ---
+// Enter -> Submit answer, Space (when not typing) -> Repeat question,
+// Ctrl+R -> Repeat, Ctrl+H -> Hint, Ctrl+K -> Shortcuts list,
+// Esc -> Exit practice.
 document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter') return;
     const practiceArea = document.getElementById('practice-area');
-    if (practiceArea && !practiceArea.classList.contains('hidden') && document.activeElement.id === 'math-answer') {
+    const inPractice = practiceArea && !practiceArea.classList.contains('hidden');
+    const isTypingInAnswer = document.activeElement && document.activeElement.id === 'math-answer';
+
+    if (e.key === 'Enter' && inPractice && isTypingInAnswer) {
         checkAnswer();
+        return;
+    }
+
+    if (e.ctrlKey && (e.key === 'r' || e.key === 'R') && inPractice) {
+        e.preventDefault();
+        repeatQuestion();
+        return;
+    }
+
+    if (e.ctrlKey && (e.key === 'h' || e.key === 'H') && inPractice) {
+        e.preventDefault();
+        showTrick();
+        return;
+    }
+
+    if (e.ctrlKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        openShortcutsDialog();
+        return;
+    }
+
+    if (e.key === 'Escape' && inPractice) {
+        exitSession();
+        return;
     }
 });
+
+// A simple, accessible shortcuts reference. Uses the native browser
+// alert() dialog: it is fully keyboard-operable and announced correctly
+// by screen readers without needing a custom focus-trapped modal.
+function openShortcutsDialog() {
+    alert(
+        "Keyboard Shortcuts\n\n" +
+        "Enter — Submit answer\n" +
+        "Ctrl + R — Repeat question aloud\n" +
+        "Ctrl + H — Hint\n" +
+        "Ctrl + K — Show this shortcuts list\n" +
+        "Esc — Exit practice"
+    );
+}

@@ -148,3 +148,37 @@
     opacity: 0.8;
     text-decoration: underline;
 }
+
+/* --- Profile Bar (Add Name / Guest / Individual indicator) --- */
+#profile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 0 14px 0;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-surface);
+    max-width: fit-content;
+    margin-left: auto;
+}
+
+#profile-bar .btn-link {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+#profile-mode-label {
+    margin: 0;
+}
+
+/* --- Stats header additions (accuracy / avg time / remaining) --- */
+.stats-header {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+}
+
+#shortcuts-btn {
+    margin-left: auto;
+}

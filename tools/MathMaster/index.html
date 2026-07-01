@@ -37,20 +37,41 @@
 </nav>
 <main class="site-main" id="main-content">
 <div class="container tool-page">
-<section class="tool-card" id="name-screen">
+<!-- Persistent "Add Name" / rename control — shown once a profile exists -->
+<div class="hidden" id="profile-bar">
+<button aria-label="Change your name" class="btn-link" id="add-name-btn" onclick="openRenameDialog()" type="button">👤 <span id="profile-name-label">Add Name</span></button>
+<span class="field-hint" id="profile-mode-label"></span>
+</div>
+<!-- STEP 1: Choose Guest or Individual profile (first visit only) -->
+<section class="tool-card" id="profile-choice-screen">
 <h2 class="section-title">Welcome to Math Master</h2>
-<p>Please enter your name to start your personalized learning journey.</p>
-<div class="input-group">
-<input aria-label="Enter your name" id="user-name-input" placeholder="Your Name" type="text"/>
-<button class="btn-main" onclick="saveName()" style="margin-top:15px;">Continue</button>
+<p>Choose how you'd like to use Math Master:</p>
+<div class="actions" style="flex-direction: column; align-items: stretch; gap: 14px; margin-top: 18px;">
+<button class="btn-main" onclick="chooseProfile('guest')" type="button">
+  🕶️ Guest Mode
+</button>
+<p class="field-hint" style="margin-top:-8px;">Quick and private. You'll enter your name again each time you revisit this tab or reopen the site.</p>
+<button class="btn-main" onclick="chooseProfile('individual')" type="button">
+  👤 Create My Profile
+</button>
+<p class="field-hint" style="margin-top:-8px;">Your name is saved on this device, so Math Master will greet you by name automatically next time.</p>
 </div>
 <div style="margin-top: 20px; text-align: center;">
 <p style="font-size: 0.95rem; color: var(--text-main);">
-    New to Math Master? 
+    New to Math Master?
     <a aria-label="View the User Guide Link. Read the Math Master User Guide to learn about levels and shortcuts" href="MathGuide/index.html" style="color: var(--primary); font-weight: 600; text-decoration: underline;">
        View the User Guide
     </a>
 </p>
+</div>
+</section>
+<!-- STEP 2: Enter name -->
+<section class="tool-card hidden" id="name-screen">
+<h2 class="section-title">What should we call you?</h2>
+<p id="name-screen-note">Please enter your name to start your personalized learning journey.</p>
+<div class="input-group">
+<input aria-label="Enter your name" id="user-name-input" placeholder="Your Name" type="text"/>
+<button class="btn-main" onclick="saveName()" style="margin-top:15px;">Continue</button>
 </div>
 <div class="disclaimer-note" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
 <p><strong>Disclaimer:</strong> Math Master generates questions automatically and checks answers to two decimal places. If something looks wrong, please use the Contact Us page to let us know — your feedback helps us make learning more accurate and inclusive for everyone.</p>
@@ -86,6 +107,19 @@
 <option value="test">Test Mode</option>
 </select>
 </div>
+<div class="input-group">
+<label for="question-count-select">Number of Questions</label>
+<select aria-describedby="qcount-help" id="question-count-select">
+<option value="5">5 Questions</option>
+<option selected="" value="10">10 Questions</option>
+<option value="20">20 Questions</option>
+<option value="25">25 Questions</option>
+<option value="50">50 Questions</option>
+<option value="100">100 Questions</option>
+<option value="unlimited">Unlimited Practice</option>
+</select>
+<p class="field-hint" id="qcount-help">In Unlimited Practice, end the session anytime with the Exit button or Esc.</p>
+</div>
 <div class="input-group hidden" id="test-timer-group">
 <label for="timer-select">Time/Question</label>
 <select id="timer-select">
@@ -102,8 +136,12 @@
 <section class="tool-card hidden" id="practice-area">
 <div class="stats-header">
 <div class="hidden" id="timer-display">⏳ <span id="time-left">00</span>s</div>
-<div>Q: <span id="current-q">1</span>/10</div>
+<div>Q: <span id="current-q">1</span>/<span id="total-q-display">10</span></div>
+<div id="remaining-display">Left: <span id="remaining-q">9</span></div>
 <div>Score: <span id="live-score">0</span></div>
+<div id="accuracy-display">Accuracy: <span id="live-accuracy">0%</span></div>
+<div id="avgtime-display">Avg: <span id="live-avgtime">0s</span></div>
+<button aria-haspopup="dialog" class="btn-icon" id="shortcuts-btn" onclick="openShortcutsDialog()" title="Keyboard Shortcuts (Ctrl+K)" type="button">⌨️</button>
 </div>
 <div class="math-arena">
 <div class="question-row">
@@ -155,7 +193,7 @@
 <nav aria-label="Footer navigation">
 <h3>Quick Links</h3>
 <ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul>
-<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li></ul>
+<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li><li><a href="../../whats-new/index.html">What's New</a></li></ul>
 </nav>
 <p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
 </div>
@@ -163,5 +201,5 @@
 <script src="math-categories.js"></script>
 <script src="math-tricks.js"></script>
 <script src="math-master.js"></script>
-<script src="../../assets/js/theme.js"></script></body>
+<script src="../../assets/js/theme.js"></script><script src="../../assets/js/whats-new-data.js"></script><script src="../../assets/js/whats-new.js"></script></body>
 </html>
