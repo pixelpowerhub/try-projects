@@ -33,7 +33,7 @@
 <button aria-pressed="false" class="theme-toggle" id="theme-toggle-btn" type="button">🌙 Dark mode</button></div>
 </header>
 <nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
 </nav>
 <main class="site-main" id="main-content">
 <div class="container tool-page">
@@ -43,11 +43,11 @@
 <p><strong>🔒 Your Privacy:</strong> No password, file, or folder is ever saved on our website backend. Encryption happens entirely in your browser. If you lose your .pph file or forget your password, you are solely responsible for your data.</p>
 </div>
 <ol>
-<li>Select the <strong>File</strong> or <strong>Folder</strong> (Please zip folders before uploading, or click "Upload Folder" in the dialog).</li>
-<li>Choose <strong>Encrypt</strong> to lock or <strong>Decrypt</strong> to unlock a .pph file.</li>
-<li>For Encryption: Set an 8+ character password and two hint questions.</li>
-<li>For Decryption: Enter the password used during locking. Use hints if forgotten.</li>
-<li>Download your processed file instantly.</li>
+<li>Choose <strong>Encrypt (Lock)</strong> to lock files or <strong>Decrypt (Unlock)</strong> to open a <code>.pph</code> file you've locked before.</li>
+<li>Select your files. You can select several files at once from your device's file picker, and add more afterward with <strong>Add More Files</strong>.</li>
+<li>For locking: set an 8+ character password and two hint questions, then choose <strong>Lock File &amp; Download</strong>.</li>
+<li>For unlocking: enter the password you used when locking. Forgot it? Use <strong>Forgot Password?</strong> to answer your hint questions instead.</li>
+<li>Your processed file(s) download straight to your device — nothing is uploaded anywhere.</li>
 </ol>
 </section>
 <section aria-label="File Locker Interface" class="tool-card">
@@ -57,9 +57,10 @@
 </div>
 <hr class="divider"/>
 <div class="vault-step" id="step-selection">
-<label class="file-label" for="fileInput">Select File or Folder to process</label>
-<input aria-describedby="file-status" id="fileInput" type="file"/>
-<p aria-live="polite" class="status-text" id="file-status">No file selected</p>
+<label class="file-label" for="fileInput">Select one or more files to process</label>
+<input aria-describedby="file-status" id="fileInput" multiple="" type="file"/>
+<p class="field-hint" id="file-picker-hint">Tip: In your device's file picker, tap multiple files, then tap "Done" to select them all at once.</p>
+<div aria-live="polite" class="status-text" id="file-status"></div>
 <div class="actions">
 <button class="btn-main" disabled="" id="btn-to-creds">Proceed to Credentials</button>
 </div>

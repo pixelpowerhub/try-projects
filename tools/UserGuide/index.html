@@ -36,7 +36,7 @@
 </header>
 <!-- ================= NAV ================= -->
 <nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
 </nav>
 <!-- ================= MAIN ================= -->
 <main class="site-main" id="main-content">
@@ -46,7 +46,7 @@
       This guide explains how to use each tool on Pixel Power Hub. All tools work fully in your browser. 
       Your files and data never leave your device.
     </p>
-<div class="section">
+<div class="section" id="password-generator">
 <h3 class="section-title">Password Generator</h3>
 <ol>
 <li>Choose the length of the password.</li>
@@ -55,16 +55,16 @@
 <li>Use <strong>Copy</strong> to copy the password or <strong>Hide</strong> to hide it from the screen.</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="text-analyzer">
 <h3 class="section-title">Text Analyzer</h3>
 <ol>
-<li>Paste text into the text box or upload a .txt file.</li>
+<li>Paste text into the text box or upload a .txt file — any language or script works, not just English.</li>
 <li>Click <strong>Analyse</strong>.</li>
-<li>View counts for words, characters, lines, and paragraphs.</li>
-<li>See the most repeated word at the bottom of the results.</li>
+<li>View counts for words, characters, lines, paragraphs, and an estimated reading time.</li>
+<li>See the most repeated word, and a readability score for English-language text (this score isn't meaningful for non-Latin scripts, so it's hidden for those).</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="text-encryptor">
 <h3 class="section-title">Text Encryptor &amp; Decryptor</h3>
 <ol>
 <li>Enter or upload your text content.</li>
@@ -73,17 +73,17 @@
 <li>Copy or export the result as a text file if needed.</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="audio-trimmer">
 <h3 class="section-title">Audio Trimmer</h3>
 <ol>
-<li>Upload an audio file (MP3 or WAV).</li>
-<li>Click <strong>Play</strong> to listen to the audio preview.</li>
-<li>Move to the start point and click <strong>Set Start</strong>.</li>
-<li>Move to the end point and click <strong>Set End</strong>.</li>
-<li>Click <strong>Trim</strong>, then select your format and <strong>Save</strong>.</li>
+<li>Upload an audio file — most common formats your browser supports will work (MP3, WAV, M4A, OGG, and more).</li>
+<li>Use the built-in audio player to preview it and find your start and end points.</li>
+<li>Move to the start point and click <strong>Set Start Point</strong>.</li>
+<li>Move to the end point and click <strong>Set End Point</strong>.</li>
+<li>Click <strong>Trim Audio</strong>, choose WAV or MP3 as your export format, then click <strong>Save File</strong>.</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="document-saver">
 <h3 class="section-title">Document Saver</h3>
 <ol>
 <li>Enter a desired file name.</li>
@@ -92,7 +92,7 @@
 <li>Click <strong>Save File</strong> to download it to your device.</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="age-calculator">
 <h3 class="section-title">Age Calculator</h3>
 <ol>
 <li>Select your birth date using the date picker.</li>
@@ -101,31 +101,35 @@
 <li>Use <strong>Reset</strong> to start over with a new date.</li>
 </ol>
 </div>
-<div class="section">
+<div class="section" id="file-locker">
 <h3 class="section-title">File Encryptor &amp; Decryptor</h3>
 <ol>
-<li>Choose <strong>Lock File</strong> or <strong>Unlock File</strong> using the tabs at the top.</li>
-<li>Select one or more files/folders to process. You can use the <strong>Add More</strong> button to bundle multiple items into one vault.</li>
-<li>Enter a strong password and set your hint questions for extra security.</li>
-<li>Click <strong>Proceed to Lock</strong> (or Unlock) to begin the process.</li>
-<li>Once processing is finished, your files will download automatically. Use the <strong>Clear</strong> button to reset the tool for a new task.</li>
+<li>Choose <strong>Encrypt (Lock)</strong> or <strong>Decrypt (Unlock)</strong> using the tabs at the top.</li>
+<li>Select your files. You can pick multiple files at once from your device's file picker — tap each one you want, then tap <strong>Done</strong>. Add more later with <strong>Add More Files</strong>.</li>
+<li>If you select more than one file, they're shown as a collapsed "X files selected" summary. Tap it to expand the list, where you'll see each file's name and a small preview, plus a button to remove it individually — or use <strong>Remove All</strong> to start over.</li>
+<li>Enter a strong password and set your hint questions for extra security (Encrypt), or your original password / hint answers (Decrypt).</li>
+<li>Click <strong>Lock File &amp; Download</strong> or <strong>Unlock File</strong> to process everything. Files download automatically — use <strong>Process Another File</strong> to reset the tool.</li>
 </ol>
 <p style="margin-top: 15px; font-size: 0.9rem; color: #166534; background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #22c55e;">
 <strong>Privacy Note:</strong> Your privacy is our priority. All encryption happens locally in your browser, meaning your files and passwords never leave your device. Because we do not store your data, please keep your password safe, as you are the only one who can access your encrypted files.
       </p>
 </div>
-<div class="section">
+<div class="section" id="math-master">
 <h3 class="section-title">Math Master</h3>
 <ol>
-<li>Select your <strong>Category</strong> (Addition, Squares, etc.) and <strong>Difficulty Level</strong>.</li>
-<li>Choose <strong>Learning Mode</strong> for practice or <strong>Test Mode</strong> for a timed challenge.</li>
-<li>Enter your answer and press <strong>Enter</strong> to receive instant audio-visual feedback.</li>
-<li>In Learning Mode, press <strong>T</strong> or click "Hear a Trick" to learn mental math shortcuts.</li>
-<li>Complete a Test session to unlock and download your <strong>Achievement Certificate</strong>.</li>
+<li>On your first visit, choose <strong>Guest Mode</strong> (asks your name each time you revisit) or <strong>Create My Profile</strong> (remembers your name on this device). You can change your name anytime with the <strong>Add Name</strong> button at the top.</li>
+<li>Select your <strong>Category</strong> (Addition, BODMAS, Fractions, Squares, and more) and a <strong>Level</strong> from 1 to 50.</li>
+<li>Choose <strong>Learning Mode</strong> for untimed practice with three tries per question, or <strong>Test Mode</strong> for a timed challenge.</li>
+<li>Pick how many questions you want — 5, 10, 20, 25, 50, 100, or Unlimited Practice — then start your session.</li>
+<li>Type your answer and press <strong>Enter</strong> to submit. Use <strong>Hint</strong> for a general tip, or <strong>Explain</strong> for a full step-by-step walkthrough of that exact question, spoken aloud.</li>
+<li>Complete a Test Mode session with 70% or higher to unlock and download your <strong>Achievement Certificate</strong>.</li>
 </ol>
 <p style="margin-top: 10px;">
+<strong>Keyboard shortcuts:</strong> <code>Enter</code> submit answer, <code>Ctrl+R</code> repeat question aloud, <code>Ctrl+H</code> hint, <code>Ctrl+K</code> show shortcuts list, <code>Esc</code> exit practice.
+      </p>
+<p style="margin-top: 10px;">
 <a href="../MathMaster/MathGuide/index.html" style="color: var(--primary); font-weight: bold; text-decoration: underline;">
-          View Detailed Math Master Guide &amp; Keyboard Shortcuts →
+          View Detailed Math Master Guide →
         </a>
 </p>
 </div>

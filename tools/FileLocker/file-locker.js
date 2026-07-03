@@ -69,6 +69,7 @@ function switchMode(mode) {
 function resetTool() {
     selectedFiles = [];
     vaultData = null;
+    revokeAllThumbnails();
     clearCredentials();
     document.getElementById('step-selection').classList.remove('hidden');
     document.getElementById('step-encrypt-fields').classList.add('hidden');
@@ -84,43 +85,131 @@ function resetTool() {
  */
 document.getElementById('fileInput').addEventListener('change', (e) => {
     const newFiles = Array.from(e.target.files);
+    if (newFiles.length === 0) return;
+
     if (currentMode === 'decrypt') {
+        if (newFiles.length > 1) {
+            alert("Please select only one locked (.pph) file to unlock at a time.");
+            e.target.value = '';
+            return;
+        }
         selectedFiles = [newFiles[0]];
         parseVaultFile(selectedFiles[0]);
     } else {
         selectedFiles = [...selectedFiles, ...newFiles];
         updateFileListUI();
     }
-    e.target.value = ''; 
+    e.target.value = '';
 });
+
+// Object URLs created for image thumbnails, so we can revoke them later
+// and avoid leaking memory as files are added/removed.
+let thumbnailUrls = new Map();
+
+function getFileIcon(file) {
+    if (file.type.startsWith('image/')) return null; // real thumbnail used instead
+    if (file.type.startsWith('audio/')) return '🎵';
+    if (file.type.startsWith('video/')) return '🎬';
+    if (file.name.endsWith('.pdf')) return '📕';
+    if (/\.(zip|rar|7z)$/i.test(file.name)) return '🗜️';
+    if (/\.(doc|docx|txt|rtf|md)$/i.test(file.name)) return '📝';
+    return '📄';
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function buildFileRow(file, index) {
+    let previewHtml;
+    if (file.type.startsWith('image/')) {
+        if (!thumbnailUrls.has(index)) {
+            thumbnailUrls.set(index, URL.createObjectURL(file));
+        }
+        previewHtml = `<img src="${thumbnailUrls.get(index)}" alt="" class="file-thumb" width="36" height="36">`;
+    } else {
+        previewHtml = `<span class="file-thumb file-thumb-icon" aria-hidden="true">${getFileIcon(file)}</span>`;
+    }
+
+    return `
+        <div class="file-item" role="listitem">
+            ${previewHtml}
+            <span class="file-item-info">
+                <span class="file-item-name">${escapeHtml(file.name)}</span>
+                <span class="file-item-size">${formatFileSize(file.size)}</span>
+            </span>
+            <button type="button" class="btn-remove" onclick="removeFile(${index})" aria-label="Remove ${escapeHtml(file.name)}">&times;</button>
+        </div>`;
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function revokeAllThumbnails() {
+    thumbnailUrls.forEach(url => URL.revokeObjectURL(url));
+    thumbnailUrls = new Map();
+}
 
 function updateFileListUI() {
     const statusBox = document.getElementById('file-status');
+
     if (selectedFiles.length === 0) {
-        statusBox.innerHTML = 'No files or folders selected.';
+        statusBox.innerHTML = '<p>No files selected.</p>';
         updateButtonState();
         return;
     }
 
-    let listHtml = '<div class="file-list-container" role="list">';
-    selectedFiles.forEach((file, index) => {
-        listHtml += `
-            <div class="file-item" role="listitem">
-                <span>📄 ${file.name}</span>
-                <button type="button" class="btn-remove" onclick="removeFile(${index})" aria-label="Remove ${file.name}">&times;</button>
-            </div>`;
-    });
-    listHtml += '</div>';
-
-    if (currentMode === 'encrypt') {
-        listHtml += `<button type="button" class="btn-add-more" onclick="document.getElementById('fileInput').click()">+ Add More Files/Folders</button>`;
+    // Single file: show it directly, no need to collapse anything.
+    if (selectedFiles.length === 1) {
+        let html = `<div class="file-list-container" role="list">${buildFileRow(selectedFiles[0], 0)}</div>`;
+        if (currentMode === 'encrypt') {
+            html += `<button type="button" class="btn-add-more" onclick="document.getElementById('fileInput').click()">+ Add More Files</button>`;
+        }
+        statusBox.innerHTML = html;
+        updateButtonState();
+        return;
     }
-    statusBox.innerHTML = listHtml;
+
+    // Multiple files: collapsed-by-default summary with a native, accessible
+    // expand/collapse (<details>/<summary>) so screen readers and keyboard
+    // users get this for free with no extra ARIA state to manage.
+    const totalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+    const rows = selectedFiles.map((file, index) => buildFileRow(file, index)).join('');
+
+    let html = `
+        <details class="file-summary">
+            <summary class="file-summary-toggle">
+                <strong>${selectedFiles.length} files selected</strong>
+                <span class="field-hint">(${formatFileSize(totalSize)} total) — tap to view or remove</span>
+            </summary>
+            <div class="file-list-container" role="list">${rows}</div>
+            <div class="file-list-actions">
+                <button type="button" class="btn-add-more" onclick="document.getElementById('fileInput').click()">+ Add More Files</button>
+                <button type="button" class="btn-remove-all" onclick="removeAllFiles()">Remove All</button>
+            </div>
+        </details>`;
+
+    statusBox.innerHTML = html;
     updateButtonState();
 }
 
 function removeFile(index) {
     selectedFiles.splice(index, 1);
+    // Indices shift after splice, so cached thumbnail URLs (keyed by old
+    // index) would point at the wrong file if kept — clear and let
+    // updateFileListUI() rebuild them fresh against the new indices.
+    revokeAllThumbnails();
+    updateFileListUI();
+}
+
+function removeAllFiles() {
+    revokeAllThumbnails();
+    selectedFiles = [];
     updateFileListUI();
 }
 

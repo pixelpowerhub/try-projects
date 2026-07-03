@@ -38,20 +38,15 @@
 </header>
 <!-- ================= NAV ================= -->
 <nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
 </nav>
 <!-- ================= MAIN ================= -->
 <main class="site-main" id="main-content">
 <div class="container tool-page">
-<!-- INSTRUCTIONS -->
+<!-- SHORT INTRO -->
 <section class="tool-instructions">
-<h2>How to use Text Analyzer</h2>
-<ol>
-<li>Paste text into the text box or upload a .txt file.</li>
-<li>Click <strong>Analyse</strong>.</li>
-<li>View counts for words, characters, lines, and paragraphs.</li>
-<li>See the most repeated word at the bottom of the results.</li>
-</ol>
+<p>Paste or type text below, then tap <strong>Analyse</strong> for a full breakdown — word count, reading time, and more. Works in any language.</p>
+<p class="field-hint"><a href="../UserGuide/index.html#text-analyzer">Need more detail? See the full User Guide.</a></p>
 </section>
 <!-- TOOL CARD -->
 <section class="tool-card">
@@ -66,8 +61,8 @@
 <button class="btn-analyse" onclick="analyseText()">Analyse</button>
 <button class="btn-clear" onclick="clearAll()">Clear</button>
 </div>
-<div id="errorMessage" role="alert"></div>
-<div aria-live="polite" class="result-box" id="resultBox" role="region">
+<div id="errorMessage" role="alert" tabindex="-1"></div>
+<div aria-live="polite" class="result-box" id="resultBox" role="region" tabindex="-1" aria-label="Analysis results">
 <div class="result-item">
 <strong>Lines:</strong>
 <span id="resLines">0</span>
@@ -83,6 +78,10 @@
 <div class="result-item">
 <strong>Paragraphs:</strong>
 <span id="resPara">0</span>
+</div>
+<div class="result-item">
+<strong>Estimated reading time:</strong>
+<span id="resReadingTime">—</span>
 </div>
 <div class="result-item">
 <strong>Most repeated word:</strong>

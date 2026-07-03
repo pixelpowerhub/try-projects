@@ -1,10 +1,21 @@
 /* ======================================================
    WHATS-NEW.JS
-   Shows a "What's New" popup once (per version) on first visit
-   to the site. Once dismissed, it will not appear again unless
-   WHATS_NEW_LATEST_VERSION in whats-new-data.js is bumped for a
-   future release. The full changelog remains readable anytime
-   at /whats-new/index.html.
+   Shows a short "What's New" popup once (per version) on first
+   visit to the site. Once dismissed, it will not appear again
+   unless WHATS_NEW_LATEST_VERSION in whats-new-data.js is bumped
+   for a future release.
+
+   ACCESSIBILITY FIX: earlier versions moved keyboard focus straight
+   to the "Got it" button when the dialog opened. That meant screen
+   readers announced "Got it, thanks — button" but never announced
+   that a dialog had opened at all. Focus now lands on the dialog
+   container itself (role="alertdialog", tabindex="-1", labelled by
+   its heading), which makes assistive technology announce the
+   dialog's role and title first — the way opening any dialog should
+   be announced. A visually-hidden aria-live="assertive" region backs
+   this up with an explicit spoken announcement, since some mobile
+   screen readers (e.g. TalkBack in "explore by touch" mode) don't
+   reliably announce a dialog from a programmatic focus() call alone.
 ====================================================== */
 (function () {
     const STORAGE_KEY = 'pph-whatsnew-dismissed-version';
@@ -31,27 +42,37 @@
         overlay.className = 'whatsnew-overlay';
         overlay.id = 'whatsnew-overlay';
 
+        // Redundant, explicit announcement for assistive technology that
+        // doesn't reliably announce a dialog just from focus() alone.
+        const announcer = document.createElement('div');
+        announcer.className = 'visually-hidden';
+        announcer.setAttribute('aria-live', 'assertive');
+        announcer.setAttribute('role', 'status');
+
         const dialog = document.createElement('div');
         dialog.className = 'whatsnew-dialog';
-        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('role', 'alertdialog');
         dialog.setAttribute('aria-modal', 'true');
         dialog.setAttribute('aria-labelledby', 'whatsnew-title');
         dialog.setAttribute('aria-describedby', 'whatsnew-desc');
+        dialog.setAttribute('tabindex', '-1');
 
-        const itemsHtml = latest.items.map(item => `<li>${item}</li>`).join('');
+        // Short, curated highlights only — 2 to 3 points, not the full log.
+        const highlights = (latest.highlights && latest.highlights.length ? latest.highlights : latest.items).slice(0, 3);
+        const itemsHtml = highlights.map(item => `<li>${item}</li>`).join('');
 
         dialog.innerHTML = `
-      <h2 id="whatsnew-title">✨ What's New — ${latest.version}</h2>
-      <p id="whatsnew-desc" class="whatsnew-subtitle">${latest.title} (${latest.date})</p>
+      <h2 id="whatsnew-title">✨ What's New</h2>
+      <p id="whatsnew-desc" class="whatsnew-subtitle">${latest.version} — ${latest.date}</p>
       <ul class="whatsnew-list">${itemsHtml}</ul>
       <div class="whatsnew-actions">
-        <a href="${whatsNewPagePath()}" class="btn-link">View full changelog</a>
         <button type="button" class="btn-main" id="whatsnew-dismiss-btn">Got it, thanks!</button>
       </div>
     `;
 
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
+        document.body.appendChild(announcer);
 
         const dismissBtn = document.getElementById('whatsnew-dismiss-btn');
         const previouslyFocused = document.activeElement;
@@ -59,6 +80,7 @@
         function close() {
             markDismissed();
             overlay.remove();
+            announcer.remove();
             if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
         }
 
@@ -73,21 +95,16 @@
             }
         });
 
-        dismissBtn.focus();
-    }
+        // Focus the DIALOG (not the button) so screen readers announce
+        // "alert dialog, What's New" — the actual fix for the reported bug.
+        dialog.focus();
 
-    // Builds a relative path to the What's New page based on how deep the
-    // current page sits in the site (e.g. /tools/MathMaster/ needs ../../).
-    function whatsNewPagePath() {
-        const depth = window.location.pathname.replace(/^\/|\/$/g, '').split('/').filter(Boolean).length;
-        // depth 0 = homepage, otherwise count folders after domain minus the trailing index.html
-        const path = window.location.pathname;
-        const segments = path.split('/').filter(Boolean);
-        // Drop the trailing filename (e.g. index.html) if present
-        if (segments.length && segments[segments.length - 1].includes('.html')) segments.pop();
-        const upCount = segments.length;
-        const prefix = '../'.repeat(upCount);
-        return `${prefix}whats-new/index.html`;
+        // Fire the backup spoken announcement just after the dialog is in
+        // the DOM and focused, so it isn't dropped by AT that ignores
+        // live-region changes that happen before it starts listening.
+        setTimeout(() => {
+            announcer.textContent = `New update available: What's New, version ${latest.version}.`;
+        }, 150);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
