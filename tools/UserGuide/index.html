@@ -36,7 +36,7 @@
 </header>
 <!-- ================= NAV ================= -->
 <nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../about/index.html">About Us</a></li></ul></div>
 </nav>
 <!-- ================= MAIN ================= -->
 <main class="site-main" id="main-content">
@@ -105,13 +105,14 @@
 <h3 class="section-title">File Encryptor &amp; Decryptor</h3>
 <ol>
 <li>Choose <strong>Encrypt (Lock)</strong> or <strong>Decrypt (Unlock)</strong> using the tabs at the top.</li>
-<li>Select your files. You can pick multiple files at once from your device's file picker — tap each one you want, then tap <strong>Done</strong>. Add more later with <strong>Add More Files</strong>.</li>
+<li>Tap <strong>📁 Choose Files</strong>. You can pick multiple files at once from your device's file picker — tap each one you want, then tap <strong>Done</strong>. Add more later with <strong>Add More Files</strong>.</li>
 <li>If you select more than one file, they're shown as a collapsed "X files selected" summary. Tap it to expand the list, where you'll see each file's name and a small preview, plus a button to remove it individually — or use <strong>Remove All</strong> to start over.</li>
-<li>Enter a strong password and set your hint questions for extra security (Encrypt), or your original password / hint answers (Decrypt).</li>
-<li>Click <strong>Lock File &amp; Download</strong> or <strong>Unlock File</strong> to process everything. Files download automatically — use <strong>Process Another File</strong> to reset the tool.</li>
+<li>For locking: set a password (8+ characters) and, optionally, two hint questions — if you fill these in, you can recover access later even if you forget your password. Leave them blank and only the password itself will unlock the file.</li>
+<li>For unlocking: enter your original password. If you set hint questions when locking, use <strong>Forgot Password?</strong> to answer them instead (this option only appears if hints were set).</li>
+<li>Click <strong>Lock File &amp; Download</strong> or <strong>Unlock File</strong>. Files download straight to your device — use <strong>Process Another File</strong> to reset the tool.</li>
 </ol>
 <p style="margin-top: 15px; font-size: 0.9rem; color: #166534; background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #22c55e;">
-<strong>Privacy Note:</strong> Your privacy is our priority. All encryption happens locally in your browser, meaning your files and passwords never leave your device. Because we do not store your data, please keep your password safe, as you are the only one who can access your encrypted files.
+<strong>Privacy Note:</strong> Your privacy is our priority. All encryption happens locally in your browser using AES-GCM, meaning your files and password never leave your device — we don't even store your password inside the locked file itself. Because we do not store your data, please keep your password (or hint answers) safe, as you are the only one who can access your encrypted files.
       </p>
 </div>
 <div class="section" id="math-master">
@@ -143,9 +144,7 @@
 <footer class="site-footer">
 <div class="container">
 <nav aria-label="Footer navigation">
-<h3>Quick Links</h3>
-<ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul>
-<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li><li><a href="../../whats-new/index.html">What's New</a></li></ul>
+<h3>Quick Links</h3><ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../contact/index.html">Contact Us</a></li><li><a href="../../whats-new/index.html">What's New</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li></ul>
 </nav>
 <p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
 </div>

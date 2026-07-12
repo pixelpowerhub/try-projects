@@ -57,14 +57,25 @@
         dialog.setAttribute('aria-describedby', 'whatsnew-desc');
         dialog.setAttribute('tabindex', '-1');
 
-        // Short, curated highlights only — 2 to 3 points, not the full log.
+        // Short, curated highlights shown by default — 2 to 3 points.
         const highlights = (latest.highlights && latest.highlights.length ? latest.highlights : latest.items).slice(0, 3);
-        const itemsHtml = highlights.map(item => `<li>${item}</li>`).join('');
+        const highlightsHtml = highlights.map(item => `<li>${item}</li>`).join('');
+
+        // Full list available on demand via a native <details> toggle, so
+        // it stays keyboard/screen-reader accessible for free and the
+        // popup never has to navigate away to show more.
+        const fullList = latest.items || [];
+        const fullListHtml = fullList.map(item => `<li>${item}</li>`).join('');
 
         dialog.innerHTML = `
       <h2 id="whatsnew-title">✨ What's New</h2>
       <p id="whatsnew-desc" class="whatsnew-subtitle">${latest.version} — ${latest.date}</p>
-      <ul class="whatsnew-list">${itemsHtml}</ul>
+      <ul class="whatsnew-list">${highlightsHtml}</ul>
+      ${fullList.length > highlights.length ? `
+      <details class="whatsnew-more">
+        <summary class="whatsnew-more-toggle">Show more updates</summary>
+        <ul class="whatsnew-list">${fullListHtml}</ul>
+      </details>` : ''}
       <div class="whatsnew-actions">
         <button type="button" class="btn-main" id="whatsnew-dismiss-btn">Got it, thanks!</button>
       </div>

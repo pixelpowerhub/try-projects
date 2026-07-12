@@ -33,22 +33,21 @@
 <button aria-pressed="false" class="theme-toggle" id="theme-toggle-btn" type="button">🌙 Dark mode</button></div>
 </header>
 <nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul></div>
+<div class="container"><ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a aria-current="page" class="active" href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../about/index.html">About Us</a></li></ul></div>
 </nav>
 <main class="site-main" id="main-content">
 <div class="container tool-page">
 <section aria-labelledby="instr-title" class="tool-instructions">
-<h2 id="instr-title">How to use File Encryptor and Decryptor</h2>
+<h2 id="instr-title">File Encryptor and Decryptor</h2>
 <div class="privacy-note" role="note">
-<p><strong>🔒 Your Privacy:</strong> No password, file, or folder is ever saved on our website backend. Encryption happens entirely in your browser. If you lose your .pph file or forget your password, you are solely responsible for your data.</p>
+<p><strong>🔒 Your Privacy:</strong> No password, file, or folder is ever saved on our website backend. Encryption happens entirely in your browser.</p>
 </div>
-<ol>
-<li>Choose <strong>Encrypt (Lock)</strong> to lock files or <strong>Decrypt (Unlock)</strong> to open a <code>.pph</code> file you've locked before.</li>
-<li>Select your files. You can select several files at once from your device's file picker, and add more afterward with <strong>Add More Files</strong>.</li>
-<li>For locking: set an 8+ character password and two hint questions, then choose <strong>Lock File &amp; Download</strong>.</li>
-<li>For unlocking: enter the password you used when locking. Forgot it? Use <strong>Forgot Password?</strong> to answer your hint questions instead.</li>
-<li>Your processed file(s) download straight to your device — nothing is uploaded anywhere.</li>
-</ol>
+<ul>
+<li>Pick <strong>Encrypt (Lock)</strong> to lock files, or <strong>Decrypt (Unlock)</strong> to open one you've locked before.</li>
+<li>Select one or more files, set a password (plus optional hint questions), and download your locked file.</li>
+<li>Keep your password safe — if you lose it and haven't set hints, we can't recover your files.</li>
+</ul>
+<p class="field-hint"><a href="../UserGuide/index.html#file-locker">Need the full step-by-step guide? See the User Guide.</a></p>
 </section>
 <section aria-label="File Locker Interface" class="tool-card">
 <div class="tabs" role="tablist">
@@ -57,10 +56,10 @@
 </div>
 <hr class="divider"/>
 <div class="vault-step" id="step-selection">
-<label class="file-label" for="fileInput">Select one or more files to process</label>
-<input aria-describedby="file-status" id="fileInput" multiple="" type="file"/>
+<label class="file-picker-btn btn-main" for="fileInput" id="file-picker-label" role="button" tabindex="0">📁 Choose Files</label>
+<input aria-describedby="file-status file-picker-hint" class="visually-hidden-file-input" id="fileInput" multiple="" tabindex="-1" type="file"/>
 <p class="field-hint" id="file-picker-hint">Tip: In your device's file picker, tap multiple files, then tap "Done" to select them all at once.</p>
-<div aria-live="polite" class="status-text" id="file-status"></div>
+<div aria-live="polite" class="status-text" id="file-status"><p>No files selected yet.</p></div>
 <div class="actions">
 <button class="btn-main" disabled="" id="btn-to-creds">Proceed to Credentials</button>
 </div>
@@ -111,9 +110,7 @@
 <footer class="site-footer">
 <div class="container">
 <nav aria-label="Footer navigation">
-<h3>Quick Links</h3>
-<ul class="nav-list"><li><a href="../../index.html">Home</a></li><li><a href="../../about/index.html">About Us</a></li><li><a href="../../tools/index.html">Tools</a></li><li><a href="../../blogs/index.html">Blogs</a></li><li><a href="../../courses/index.html">Courses</a></li><li><a href="../../faqs/index.html">FAQs</a></li><li><a href="../../contact/index.html">Contact Us</a></li></ul>
-<ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../terms/index.html">Terms &amp; Conditions</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li><li><a href="../../whats-new/index.html">What's New</a></li></ul>
+<h3>Quick Links</h3><ul class="nav-list"><li><a href="../../privacy-policy/index.html">Privacy Policy</a></li><li><a href="../../contact/index.html">Contact Us</a></li><li><a href="../../whats-new/index.html">What's New</a></li><li><a href="../../accessibility/index.html">Accessibility Statement</a></li></ul>
 </nav>
 <p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
 </div>
