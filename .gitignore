@@ -1,0 +1,24 @@
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
+
+# Dependencies (if you later add a build step)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Archives / exports
+*.zip

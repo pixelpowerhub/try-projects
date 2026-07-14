@@ -1,0 +1,99 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "games": {
+      ".read": "auth != null",
+
+      "$gid": {
+        ".write": "auth != null && (
+            !data.exists()
+            || data.child('hostUid').val() === auth.uid
+            || (newData.exists() && data.child('players').hasChild(auth.uid))
+          )",
+
+        "id":        { ".validate": "newData.val() === $gid" },
+        "boardId":   { ".validate": "newData.isString()" },
+        "boardName": { ".validate": "newData.isString() && newData.val().length <= 60" },
+        "hostId":    { ".validate": "newData.isString()" },
+        "hostUid":   { ".validate": "newData.isString()" },
+        "hostPassHash": {
+          ".validate": "newData.isString() && newData.val().length === 64"
+        },
+        "hostPass": { ".validate": false },
+        "status": {
+          ".validate": "newData.isString() && newData.val().matches(/^(waiting|playing|ended|terminated)$/)"
+        },
+        "createdAt":     { ".validate": "newData.isNumber()" },
+        "lastActivity":  { ".validate": "newData.isNumber()" },
+        "lastUpdated":   { ".validate": "newData.isNumber()" },
+        "currentTurn":   { ".validate": "newData.isString()" },
+        "turnIndex":     { ".validate": "newData.isNumber()" },
+        "winnerId":      { ".validate": "newData.isString()" },
+
+        "playerOrder": {
+          "$idx": { ".validate": "newData.isString()" }
+        },
+
+        "players": {
+          "$pid": {
+            ".write": "auth != null && (
+                auth.uid === $pid
+                || data.child('../../hostUid').val() === auth.uid
+                || data.parent().parent().child('hostUid').val() === auth.uid
+              )",
+            "id":         { ".validate": "newData.val() === $pid" },
+            "name":       { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30" },
+            "color":      { ".validate": "newData.isString()" },
+            "money":      { ".validate": "newData.isNumber()" },
+            "position":   { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 40" },
+            "turns":      { ".validate": "newData.isNumber()" },
+            "bankrupt":   { ".validate": "newData.isBoolean()" },
+            "properties": {
+              "$idx": { ".validate": "newData.isNumber()" }
+            }
+          }
+        },
+
+        "properties": {
+          "$pos": {
+            "pos":         { ".validate": "newData.val() == $pos" },
+            "ownerId":     { ".validate": "newData.isString()" },
+            "ownerName":   { ".validate": "newData.isString() && newData.val().length <= 30" },
+            "price":       { ".validate": "newData.isNumber()" },
+            "currentRent": { ".validate": "newData.isNumber()" },
+            "boughtAt":    { ".validate": "newData.isNumber()" }
+          }
+        },
+
+        "joinRequests": {
+          "$rid": {
+            ".write": "auth != null && (
+                (!data.exists() && newData.child('playerId').val() === auth.uid)
+                || data.parent().parent().child('hostUid').val() === auth.uid
+                || (data.exists() && data.child('playerId').val() === auth.uid)
+              )",
+            "id":         { ".validate": "newData.isString()" },
+            "playerId":   { ".validate": "newData.isString()" },
+            "playerName": { ".validate": "newData.isString() && newData.val().length <= 30" },
+            "timestamp":  { ".validate": "newData.isNumber()" },
+            "status":     { ".validate": "newData.val().matches(/^(pending|admitted|denied)$/)" },
+            "playerIndex":{ ".validate": "newData.isNumber()" }
+          }
+        },
+
+        "chat": {
+          "$mid": {
+            ".write": "auth != null",
+            "sender": { ".validate": "newData.isString() && newData.val().length <= 30" },
+            "text":   { ".validate": "newData.isString() && newData.val().length <= 500" },
+            "sys":    { ".validate": "newData.isBoolean()" },
+            "ts":     { ".validate": "newData.isNumber()" },
+            "pid":    { ".validate": "newData.isString()" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,141 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>Pixel Power Hub</title>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<!-- CSS FILES -->
-<link href="./assets/css/common.css" rel="stylesheet"/>
-<link href="./assets/css/home.css" rel="stylesheet"/>
-<!-- Google tag (gtag.js) -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99M42DBHR6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indic Monopoly - India's Own Board Game</title>
+<meta name="description" content="Indic Monopoly - a free real-time multiplayer Monopoly-style board game set across Indian states. Screen reader friendly.">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#screen-home" class="skip-link">Skip to main content</a>
+<div id="notif-area" class="notif-area" role="status" aria-live="polite"></div>
+<div id="loader" class="loader" role="status" aria-live="polite">
+  <div class="spin-ring"></div>
+  <div style="color:rgba(255,255,255,.6);font-size:.85rem">Loading...</div>
+</div>
 
-  gtag('config', 'G-99M42DBHR6');
-</script>
-<script async="" crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5034400075369858"></script>
-<meta content="Pixel Power Hub offers free, accessible technology tools and learning resources, designed with screen reader and keyboard users in mind." name="description"/><link href="https://pixelpowerhub.in/" rel="canonical"/><meta content="Pixel Power Hub" property="og:title"/><meta content="Pixel Power Hub offers free, accessible technology tools and learning resources, designed with screen reader and keyboard users in mind." property="og:description"/><meta content="website" property="og:type"/><meta content="https://pixelpowerhub.in/" property="og:url"/><meta content="Pixel Power Hub" property="og:site_name"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" property="og:image"/><meta content="summary" name="twitter:card"/><meta content="Pixel Power Hub" name="twitter:title"/><meta content="Pixel Power Hub offers free, accessible technology tools and learning resources, designed with screen reader and keyboard users in mind." name="twitter:description"/><meta content="https://pixelpowerhub.in/assets/images/logo.png" name="twitter:image"/></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
-<header class="site-header">
-<div class="container">
-<div class="site-logo">
-<a href="index.html">
-<img alt="Pixel Power Hub Logo" src="./assets/images/logo.png"/>
-</a>
+<!-- HOME -->
+<div id="screen-home" class="screen active" role="main" aria-label="Home Screen">
+  <div class="logo">
+    <div class="logo-wheel" aria-hidden="true">&#9784;</div>
+    <div class="logo-title">Indic Monopoly</div>
+    <div class="logo-sub">India's Own Board Game</div>
+  </div>
+  <div class="card">
+    <button class="btn-p" id="btn-create" aria-label="Create a new game">&#127918; Create Game</button>
+    <button class="btn-s" id="btn-join" aria-label="Join an existing game">&#128682; Join Game</button>
+    <button class="btn-s" id="btn-restore" aria-label="Restore your game" style="background:rgba(255,107,0,.12);border-color:rgba(255,107,0,.3);color:rgba(255,107,0,.9)">&#128274; Restore My Game</button>
+    <div class="account-row">
+      <span id="account-status" class="account-status" aria-live="polite">Playing as guest</span>
+      <button class="btn-account" id="btn-google-signin" type="button" aria-label="Sign in with Google to save your profile">Sign in with Google</button>
+      <button class="btn-account" id="btn-signout" type="button" style="display:none" aria-label="Sign out and return to guest mode">Sign out</button>
+    </div>
+    <p style="text-align:center;font-size:.7rem;color:rgba(255,255,255,.26);margin-top:4px">
+      <span class="live-dot" aria-hidden="true"></span>Real-time multiplayer &bull; Screen reader friendly
+    </p>
+  </div>
 </div>
-<div class="site-title">
-<h1>Welcome to Pixel Power Hub</h1>
-<p aria-live="polite" id="greeting"></p>
-<p id="current-date"></p>
-<p id="current-time"></p>
+
+<!-- LOBBY -->
+<div id="screen-lobby" class="screen" role="main" aria-label="Game Lobby">
+  <div class="lobby-wrap">
+    <div class="lobby-hdr">
+      <h2>&#127919; Available Games</h2>
+      <p>Click any room to request to join</p>
+    </div>
+    <div id="lobby-list" class="lobby-grid" role="list" aria-label="Game rooms"></div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn-s" id="btn-back-lobby" style="max-width:240px">&larr; Back to Home</button>
+    </div>
+  </div>
 </div>
-<button aria-pressed="false" class="theme-toggle" id="theme-toggle-btn" type="button">🌙 Dark mode</button></div>
-</header>
-<nav aria-label="Main navigation" class="site-nav">
-<div class="container"><ul class="nav-list"><li><a aria-current="page" class="active" href="./index.html">Home</a></li><li><a href="./tools/index.html">Tools</a></li><li><a href="./blogs/index.html">Blogs</a></li><li><a href="./courses/index.html">Courses</a></li><li><a href="./about/index.html">About Us</a></li></ul></div>
-</nav>
-<!--  MAIN CONTENT -->
-<main class="site-main" id="main-content">
-<div class="container">
-<!-- INTRODUCTION -->
-<section>
-<h2>Pixel Power Hub</h2>
-<p><em>“Empowering users through accessible technology and learning.”</em></p>
-<p>
-      Pixel Power Hub is a user-focused platform designed to provide simple,
-      practical, and accessible technology tools and learning resources.
-      Our goal is to help students, learners, and everyday users use technology
-      confidently, with a strong focus on accessibility and ease of use.
-    </p>
-</section>
-<!-- OUR VISION -->
-<section>
-<h2>Our Vision</h2>
-<p>
-      Our vision is to create an inclusive digital space where technology is
-      accessible to everyone. We aim to reduce barriers in digital learning
-      and empower users to explore, learn, and grow through simple and
-      meaningful technological solutions.
-    </p>
-</section>
-<!-- OUR MISSION -->
-<section>
-<h2>Our Mission</h2>
-<p>
-      Our mission is to deliver easy-to-use online tools, clear learning
-      resources, and accessible digital experiences. We focus on simplicity,
-      usability, and inclusion to support users in developing skills and
-      confidence in technology.
-    </p>
-</section>
-<!-- UPDATES -->
-<section>
-<h2>Updates</h2>
-<ul>
-<li>New tools and features are being added regularly.</li>
-<li>Website accessibility and performance improvements.</li>
-<li>Upcoming learning resources and guides.</li>
-</ul>
-</section>
-<!-- FEATURED TOOLS -->
-<section aria-labelledby="tools-heading" class="featured-tools">
-<h2 id="tools-heading">Featured Tools</h2>
-<ul class="tools-list" id="featured-tools-list"></ul>
-</section>
-<!-- WHY CHOOSE US -->
-<section>
-<h2>Why Choose Pixel Power Hub</h2>
-<ul>
-<li>Simple and clean interface</li>
-<li>Accessibility-first design approach</li>
-<li>Free and practical tools</li>
-<li>Useful for students, learners, and general users</li>
-<li>Works smoothly across devices</li>
-</ul>
-</section>
-<!-- ACCESSIBILITY -->
-<section>
-<h2>Accessibility &amp; Inclusion</h2>
-<p>
-      Accessibility is at the core of Pixel Power Hub. Our platform is designed
-      to support screen readers, keyboard navigation, and clear content
-      structure. We believe in inclusive technology that enables all users
-      to participate equally in digital learning.
-    </p>
-</section>
-<!-- LEARNING & GROWTH -->
-<section>
-<h2>Learning &amp; Growth</h2>
-<p>
-      Pixel Power Hub supports continuous learning through guides, tools,
-      and educational resources. We aim to help users build skills gradually
-      and stay confident as they grow in their learning journey.
-    </p>
-</section>
-<!-- GET STARTED -->
-<section>
-<h2>Get Started</h2>
-<p>
-      Explore our tools, learn more about Pixel Power Hub, visit the FAQs
-      for assistance, or contact us for support. Start your journey with
-      simple and accessible technology today.
-    </p>
-</section>
+
+<!-- WAITING ROOM -->
+<div id="screen-waiting" class="screen" role="main" aria-label="Waiting Room">
+  <div class="waiting-wrap">
+    <h2 id="wr-name">Game Room</h2>
+    <div style="color:rgba(255,255,255,.42);font-size:.83rem">Board: <strong id="wr-board" style="color:#FF6B00">-</strong></div>
+    <div class="room-code" id="wr-code" aria-label="Room code">-</div>
+    <div id="wr-pass" style="color:rgba(255,107,0,.7);font-size:.82rem;margin-bottom:6px">Password: <strong id="wr-pass-val">-</strong></div>
+    <div id="wr-players" class="players-row" role="list" aria-label="Players in room"></div>
+    <div id="wr-status" class="wr-status">Waiting for players...</div>
+    <button class="btn-start-g" id="btn-start-game" disabled style="display:none">Start Game &rarr;</button>
+    <button class="btn-s" id="btn-leave-wr" style="margin-top:12px;padding:10px 26px;width:auto">Leave Room</button>
+  </div>
 </div>
-</main>
-<footer class="site-footer">
-<div class="container">
-<nav aria-label="Footer navigation">
-<h3>Quick Links</h3><ul class="nav-list"><li><a href="./privacy-policy/index.html">Privacy Policy</a></li><li><a href="./contact/index.html">Contact Us</a></li><li><a href="whats-new/index.html">What's New</a></li><li><a href="accessibility/index.html">Accessibility Statement</a></li></ul>
-</nav>
-<p>Copyright © 2024 - 2026 Pixel Power Hub. All rights reserved.</p>
+
+<!-- GAME -->
+<div id="screen-game" class="screen" role="main" aria-label="Game Board">
+  <div class="game-layout">
+    <div class="board-wrap">
+      <div class="board" id="game-board" role="grid" aria-label="Indic Monopoly Board"></div>
+    </div>
+    <aside class="side" aria-label="Game Controls">
+      <div class="side-hdr">
+        <div class="side-gname" id="side-gname">Game</div>
+        <div class="side-bname" id="side-bname">Board</div>
+      </div>
+      <div class="turn-bar" id="turn-bar" aria-live="polite" aria-atomic="true">Waiting...</div>
+      <div class="pstrip" id="pstrip" role="list" aria-label="Players"></div>
+      <div class="dice-row">
+        <div class="die" id="die1" aria-label="Die 1">&#127922;</div>
+        <div class="die" id="die2" aria-label="Die 2">&#127922;</div>
+        <div class="dice-info">
+          <strong id="dice-result">Roll the dice!</strong>
+          <span id="dice-moved"></span>
+        </div>
+      </div>
+      <div class="act-grid" role="toolbar" aria-label="Game actions">
+        <button class="btn-act roll" id="btn-roll" disabled aria-label="Roll dice" style="grid-column:1/-1">&#127922; Roll Dice — It's your turn!</button>
+        <button class="btn-act" id="btn-myprops" aria-label="My properties">&#127968; My Props</button>
+        <button class="btn-act" id="btn-others" aria-label="Others props">&#128101; Others Props</button>
+        <button class="btn-act danger" id="btn-leave-game" aria-label="Leave game" style="grid-column:1/-1">&#128682; Leave Game</button>
+      </div>
+      <section class="chat-wrap" aria-label="Chat">
+        <div class="chat-box" id="chat-box" role="log" aria-live="polite" aria-label="Chat messages"></div>
+        <div class="chat-irow">
+          <label for="chat-inp" class="sr-only">Type a message</label>
+          <input type="text" id="chat-inp" class="chat-inp" placeholder="Type a message..." maxlength="200">
+          <button class="chat-send" id="btn-chat-send" aria-label="Send message">&#10148;</button>
+        </div>
+      </section>
+    </aside>
+  </div>
 </div>
-</footer>
-<!-- JS FILES -->
-<script src="./assets/js/tools-data.js"></script>
-<script src="./assets/js/home.js"></script>
-<script src="assets/js/theme.js"></script><script src="assets/js/whats-new-data.js"></script><script src="assets/js/whats-new.js"></script></body>
+
+<!-- MODAL: CREATE -->
+<div id="modal-create" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mc-h">
+  <div class="modal">
+    <h2 id="mc-h">&#127918; Create New Game</h2>
+    <label for="inp-cname">Your Name</label>
+    <input type="text" id="inp-cname" placeholder="Enter your name..." maxlength="20" autocomplete="given-name">
+    <label for="inp-gpass">Room Password (4-6 digits)</label>
+    <input type="text" id="inp-gpass" placeholder="e.g. 1234" maxlength="6" inputmode="numeric">
+    <label for="inp-board">Select Board (State)</label>
+    <select id="inp-board"></select>
+    <div class="mrow">
+      <button class="btn-s" id="btn-cancel-create">Cancel</button>
+      <button class="btn-p" id="btn-do-create">Create Game &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: JOIN NAME -->
+<div id="modal-join" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mj-h">
+  <div class="modal">
+    <h2 id="mj-h">&#128682; Join Game</h2>
+    <p id="join-info" style="color:rgba(255,255,255,.42);font-size:.83rem;margin-bottom:14px">Joining game...</p>
+    <label for="inp-jname">Your Name</label>
+    <input type="text" id="inp-jname" placeholder="Enter your name..." maxlength="20" autocomplete="given-name">
+    <label for="inp-jpass">Room Password (leave empty if you are joining)</label>
+    <input type="text" id="inp-jpass" placeholder="Host? Enter password to restore..." maxlength="6" inputmode="numeric">
+    <div class="mrow">
+      <button class="btn-s" id="btn-cancel-join">Cancel</button>
+      <button class="btn-p" id="btn-do-join">Request to Join &rarr;</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL: RESTORE -->
+<div id="modal-restore" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mr-h">
+  <div class="modal">
+    <h2 id="mr-h">&#128274; Restore Your Game</h2>
+    <p style="color:rgba(255,255,255,.42);font-size:.83rem;margin-bottom:14px">Enter your host password to restore your game session.</p>
+    <label for="inp-rpass">Host Password</label>
+    <input type="text" id="inp-rpass" placeholder="Enter your password..." maxlength="6" inputmode="numeric">
+    <div id="restore-list" style="max-height:200px;overflow-y:auto;margin-bottom:14px"></div>
+    <div class="mrow">
+      <button class="btn-s" id="btn-cancel-restore">Cancel</button>
+      <button class="btn-p" id="btn-do-restore">Restore Game &#8594;</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL: PROPERTY -->
+<div id="modal-prop" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mp-h">
+  <div class="prop-modal">
+    <div class="p-cbar" id="prop-cbar"></div>
+    <h3 id="mp-h">Property</h3>
+    <div class="prop-tag" id="prop-tag"></div>
+    <div id="prop-stats"></div>
+    <div id="prop-owner"></div>
+    <div class="mrow" id="prop-acts" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- MODAL: INFO/EVENT -->
+<div id="modal-info" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mi-h">
+  <div class="ev-card">
+    <div class="ev-icon" id="ev-icon">i</div>
+    <div class="ev-title" id="mi-h">Info</div>
+    <div class="ev-desc" id="ev-desc"></div>
+    <div class="ev-amt" id="ev-amt"></div>
+    <button class="btn-p" id="btn-info-ok" style="max-width:180px;margin:0 auto">OK</button>
+  </div>
+</div>
+
+<!-- MODAL: SELL -->
+<div id="modal-sell" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="ms-h">
+  <div class="modal" style="max-width:450px">
+    <h2 id="ms-h">&#128246; Sell a Property</h2>
+    <p id="sell-reason" style="color:rgba(255,80,80,.8);font-size:.82rem;margin-bottom:9px"></p>
+    <div id="sell-list" class="sell-list" role="list"></div>
+    <div class="mrow">
+      <button class="btn-s" id="btn-sell-cancel">Cancel</button>
+      <button class="btn-p" id="btn-sell-ok" disabled>Sell Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VIEW PROPS -->
+<div id="modal-vprops" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mvp-h">
+  <div class="modal" style="max-width:500px">
+    <h2 id="mvp-h">Properties</h2>
+    <div id="vprops-content" class="vprops-grid"></div>
+    <button class="btn-p" id="btn-close-vprops" style="margin-top:9px">Close</button>
+  </div>
+</div>
+
+<!-- MODAL: WIN -->
+<div id="modal-win" class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="mw-h">
+  <div class="win-card">
+    <div class="win-icon" aria-hidden="true">&#127942;</div>
+    <h2 id="mw-h">You Won!</h2>
+    <p id="win-desc">Congratulations!</p>
+    <button class="btn-p" id="btn-win-home" style="max-width:230px;margin:0 auto">&#127968; Back to Home</button>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti-wrap" aria-hidden="true"></div>
+
+<script src="js/security-utils.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/sound-manager.js"></script>
+<script src="js/boards-data.js"></script>
+<script src="js/app.js"></script>
+</body>
 </html>
