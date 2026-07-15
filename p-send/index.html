@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Share — Direct Peer-to-Peer File Transfer</title>
+<meta name="description" content="Send files directly from one browser to another. No uploads, no server storage, just a straight line between two people.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<style>
+  :root{
+    --bg: #0B1220;
+    --panel: #121B2E;
+    --panel-raised: #172238;
+    --border: #223049;
+    --text: #E7ECF5;
+    --text-muted: #93A1B8;
+    --cyan: #38BDF8;
+    --cyan-dim: #1B3A50;
+    --amber: #FBBF24;
+    --amber-dim: #4A3A15;
+    --emerald: #34D399;
+    --emerald-dim: #16352A;
+    --red: #F87171;
+    --radius: 14px;
+    --focus: #7DD3FC;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  .skip-link{
+    position:absolute; left:-9999px; top:0;
+    background:var(--cyan); color:#00202B; padding:10px 16px;
+    border-radius:0 0 8px 0; font-weight:600; z-index:100;
+  }
+  .skip-link:focus{ left:0; }
+
+  a, button, input, [tabindex]{ }
+  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  header.site-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 6vw;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.25rem;
+    color: var(--text); text-decoration:none;
+  }
+  .brand-mark{
+    width:30px; height:30px; border-radius:8px;
+    background: linear-gradient(135deg, var(--cyan), var(--emerald));
+    position:relative; flex-shrink:0;
+  }
+  .brand-mark::before, .brand-mark::after{
+    content:""; position:absolute; width:6px; height:6px; border-radius:50%;
+    background:#04121A; top:50%; transform:translateY(-50%);
+  }
+  .brand-mark::before{ left:5px; }
+  .brand-mark::after{ right:5px; }
+  .tagline{ color:var(--text-muted); font-size:0.85rem; }
+
+  main{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 8vh 20px 10vh;
+  }
+
+  .screen{ display:none; }
+  .screen.active{ display:block; animation: rise 0.4s ease; }
+  @keyframes rise{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+
+  h1.hero-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    line-height:1.15; margin: 0 0 10px;
+  }
+  p.hero-sub{
+    color: var(--text-muted); font-size:1.02rem; line-height:1.6;
+    max-width: 52ch; margin: 0 0 36px;
+  }
+
+  label{ display:block; font-weight:600; font-size:0.92rem; margin-bottom:8px; }
+  .field-hint{ color:var(--text-muted); font-size:0.85rem; margin-top:6px; }
+
+  input[type="text"]{
+    width:100%; padding: 14px 16px; font-size:1.05rem;
+    background: var(--panel); border:1.5px solid var(--border); border-radius:10px;
+    color:var(--text); font-family:'Inter', sans-serif;
+  }
+  input[type="text"]::placeholder{ color: #5B6B85; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:'Inter', sans-serif; font-weight:600; font-size:1rem;
+    padding: 14px 22px; border-radius:10px; border:1.5px solid transparent;
+    cursor:pointer; text-decoration:none; transition: transform 0.12s ease, background 0.15s ease;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-primary{ background: var(--cyan); color:#00202B; }
+  .btn-primary:hover:not(:disabled){ background:#5CC9FA; }
+  .btn-ghost{ background:transparent; color:var(--text); border-color: var(--border); }
+  .btn-ghost:hover:not(:disabled){ border-color: var(--cyan); color:var(--cyan); }
+  .btn-block{ width:100%; }
+
+  .choice-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top: 8px; }
+  @media (max-width:560px){ .choice-grid{ grid-template-columns:1fr; } }
+
+  .choice-card{
+    background: var(--panel); border:1.5px solid var(--border); border-radius: var(--radius);
+    padding: 28px 22px; text-align:left; cursor:pointer; color:var(--text);
+    font-family:'Inter', sans-serif; transition: border-color 0.15s ease, transform 0.12s ease;
+  }
+  .choice-card:hover{ border-color: var(--cyan); transform: translateY(-2px); }
+  .choice-icon{
+    width:44px; height:44px; border-radius:10px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  }
+  .choice-card.send .choice-icon{ background: var(--cyan-dim); color:var(--cyan); }
+  .choice-card.receive .choice-icon{ background: var(--emerald-dim); color:var(--emerald); }
+  .choice-card h2{ font-family:'Space Grotesk', sans-serif; font-size:1.15rem; margin: 0 0 6px; }
+  .choice-card p{ color:var(--text-muted); font-size:0.9rem; margin:0; line-height:1.5; }
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; color:var(--text-muted);
+    text-decoration:none; font-size:0.9rem; margin-bottom: 24px; background:none; border:none;
+    cursor:pointer; font-family:'Inter',sans-serif; padding:4px;
+  }
+  .back-link:hover{ color:var(--cyan); }
+
+  .panel{
+    background: var(--panel); border:1.5px solid var(--border); border-radius: var(--radius);
+    padding: 28px; margin-bottom:20px;
+  }
+
+  .file-drop{
+    border: 1.5px dashed var(--border); border-radius: 10px; padding: 28px 18px;
+    text-align:center; cursor:pointer; transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .file-drop:hover, .file-drop.drag-over{ border-color: var(--cyan); background: var(--cyan-dim); }
+  .file-drop input[type=file]{ display:none; }
+  .file-drop-icon{ font-size:1.6rem; margin-bottom:8px; }
+  .file-drop strong{ color:var(--cyan); }
+
+  .file-list{ list-style:none; margin: 16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .file-list li{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background: var(--panel-raised); border:1px solid var(--border); border-radius:8px;
+    padding:10px 14px; font-size:0.9rem;
+  }
+  .file-list .fname{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-list .fsize{ color:var(--text-muted); flex-shrink:0; font-family:'JetBrains Mono', monospace; font-size:0.82rem; }
+  .file-list button.remove{
+    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1; padding:2px 6px;
+  }
+  .file-list button.remove:hover{ color: var(--red); }
+
+  .key-display{
+    display:flex; align-items:center; gap:12px; margin: 18px 0;
+    background: var(--panel-raised); border:1.5px solid var(--amber); border-radius:10px;
+    padding: 18px 20px;
+  }
+  .key-display .key{
+    font-family:'JetBrains Mono', monospace; font-size: 1.7rem; letter-spacing: 3px;
+    font-weight:700; color: var(--amber); flex:1;
+  }
+  .key-copy{
+    background: var(--amber-dim); color: var(--amber); border:1px solid var(--amber);
+    border-radius:8px; padding:8px 14px; font-size:0.85rem; font-weight:600; cursor:pointer;
+  }
+  .key-copy:hover{ background: var(--amber); color:#2B1D00; }
+
+  .key-input-row{ display:flex; gap:10px; }
+  .key-input-row input{ text-transform:uppercase; letter-spacing:2px; font-family:'JetBrains Mono', monospace; }
+
+  /* Connection signature: two nodes + animated link */
+  .link-diagram{
+    display:flex; align-items:center; justify-content:center; gap:0;
+    margin: 8px 0 22px; padding: 22px 6px;
+  }
+  .link-node{
+    width:56px; height:56px; border-radius:50%; flex-shrink:0;
+    background: var(--panel-raised); border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:0.78rem;
+    color: var(--text-muted); text-align:center; transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  .link-diagram.connecting .link-node{ border-color: var(--amber); color: var(--amber); }
+  .link-diagram.connected .link-node, .link-diagram.transferring .link-node, .link-diagram.done .link-node{
+    border-color: var(--cyan); color: var(--cyan);
+  }
+  .link-diagram.done .link-node{ border-color: var(--emerald); color: var(--emerald); }
+
+  .link-track{
+    flex:1; max-width:220px; height:2px; background: var(--border); position:relative; margin: 0 6px;
+    overflow:hidden;
+  }
+  .link-track::before{
+    content:""; position:absolute; inset:0; background: repeating-linear-gradient(90deg, var(--cyan) 0 8px, transparent 8px 16px);
+    opacity:0; transform: translateX(-100%);
+  }
+  .link-diagram.connecting .link-track::before{
+    opacity:0.9; animation: flow 1s linear infinite;
+  }
+  .link-diagram.transferring .link-track::before{
+    opacity:1; animation: flow 0.5s linear infinite;
+  }
+  .link-diagram.done .link-track{ background: var(--emerald); }
+  @keyframes flow{ from{ transform: translateX(-100%);} to{ transform: translateX(0%);} }
+
+  .status-line{
+    text-align:center; font-size:0.95rem; color: var(--text-muted); min-height:1.4em; margin-bottom: 6px;
+  }
+  .status-line.assertive{ color: var(--text); font-weight:600; }
+
+  .progress-wrap{ margin-top:18px; }
+  .progress-track{
+    width:100%; height:10px; background: var(--panel-raised); border-radius:6px; overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .progress-fill{
+    height:100%; width:0%; background: linear-gradient(90deg, var(--cyan), var(--emerald));
+    transition: width 0.2s ease;
+  }
+  .progress-meta{
+    display:flex; justify-content:space-between; margin-top:10px;
+    font-family:'JetBrains Mono', monospace; font-size:0.82rem; color: var(--text-muted);
+  }
+
+  .download-box{
+    margin-top:18px; padding:18px; border-radius:10px; background: var(--emerald-dim);
+    border:1.5px solid var(--emerald); text-align:center;
+  }
+  .download-box a.btn{ margin-top:10px; }
+
+  .note-box{
+    background: var(--panel-raised); border:1px solid var(--border); border-left:3px solid var(--cyan);
+    border-radius: 8px; padding: 16px 18px; font-size:0.87rem; color: var(--text-muted); line-height:1.6;
+    margin-top: 24px;
+  }
+  .note-box strong{ color: var(--text); }
+  .note-box ul{ margin: 8px 0 0; padding-left: 18px; }
+  .note-box li{ margin-bottom:4px; }
+
+  footer.site-footer{
+    text-align:center; color: var(--text-muted); font-size:0.82rem; padding: 24px; border-top:1px solid var(--border);
+  }
+
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<header class="site-header">
+  <span class="brand" aria-label="Pixel Share">
+    <span class="brand-mark" aria-hidden="true"></span>
+    Pixel Share
+  </span>
+  <span class="tagline">by Pixel Power Hub</span>
+</header>
+
+<main id="main-content">
+
+  <!-- SCREEN 1: Name entry -->
+  <section id="screen-name" class="screen active" aria-labelledby="name-title">
+    <h1 class="hero-title" id="name-title">A direct line between two browsers.</h1>
+    <p class="hero-sub">Pixel Share moves files straight from your device to someone else's using a peer-to-peer connection. Nothing is uploaded to a server or stored anywhere in between.</p>
+
+    <form id="name-form" novalidate>
+      <label for="name-input">Your name</label>
+      <input type="text" id="name-input" name="name" placeholder="e.g. Sidhu" autocomplete="off" required maxlength="30">
+      <p class="field-hint">Shown to the other person once you connect. Not sent anywhere else.</p>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:20px;">Continue</button>
+    </form>
+  </section>
+
+  <!-- SCREEN 2: Choice -->
+  <section id="screen-choice" class="screen" aria-labelledby="choice-title">
+    <button class="back-link" data-back="screen-name">&larr; Back</button>
+    <h1 class="hero-title" id="choice-title">What would you like to do, <span id="choice-name">friend</span>?</h1>
+    <p class="hero-sub">Pick a side. One person sends, the other receives — you'll need a security key to link the two.</p>
+
+    <div class="choice-grid">
+      <button class="choice-card send" id="btn-go-send">
+        <span class="choice-icon" aria-hidden="true">&#8593;</span>
+        <h2>Send files</h2>
+        <p>Choose files and get a security key to share with the receiver.</p>
+      </button>
+      <button class="choice-card receive" id="btn-go-receive">
+        <span class="choice-icon" aria-hidden="true">&#8595;</span>
+        <h2>Receive files</h2>
+        <p>Enter the security key someone shared with you to start receiving.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: Send -->
+  <section id="screen-send" class="screen" aria-labelledby="send-title">
+    <button class="back-link" data-back="screen-choice">&larr; Back</button>
+    <h1 class="hero-title" id="send-title">Send files</h1>
+
+    <div class="panel">
+      <div id="send-step-pick">
+        <label id="file-drop-label" for="file-input">Files to send</label>
+        <div class="file-drop" id="file-drop" tabindex="0" role="button" aria-labelledby="file-drop-label" aria-describedby="file-drop-hint">
+          <div class="file-drop-icon" aria-hidden="true">&#128193;</div>
+          <div><strong>Choose files</strong> or drag them here</div>
+          <p class="field-hint" id="file-drop-hint">Works best under about 1.5 GB total, depending on your browser's available memory.</p>
+          <input type="file" id="file-input" multiple>
+        </div>
+        <ul class="file-list" id="file-list" aria-live="polite"></ul>
+        <button class="btn btn-primary btn-block" id="btn-generate-key" style="margin-top:20px;" disabled>Generate security key</button>
+      </div>
+
+      <div id="send-step-waiting" style="display:none;">
+        <p class="status-line">Share this security key with the receiver:</p>
+        <div class="key-display">
+          <span class="key" id="send-key-value">------</span>
+          <button class="key-copy" id="btn-copy-key">Copy</button>
+        </div>
+
+        <div class="link-diagram" id="send-link-diagram">
+          <div class="link-node" id="send-node-you">You</div>
+          <div class="link-track" aria-hidden="true"></div>
+          <div class="link-node" id="send-node-peer">Peer</div>
+        </div>
+
+        <p class="status-line assertive" id="send-status" role="status" aria-live="polite">Waiting for the receiver to connect&hellip;</p>
+
+        <div class="progress-wrap" id="send-progress-wrap" style="display:none;">
+          <div class="progress-track"><div class="progress-fill" id="send-progress-fill"></div></div>
+          <div class="progress-meta">
+            <span id="send-progress-bytes">0 MB of 0 MB</span>
+            <span id="send-progress-speed">0 MB/s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>How this works</strong>
+      <ul>
+        <li>Your files travel directly to the receiver's browser over a peer-to-peer connection — Pixel Share's server only helps the two of you find each other.</li>
+        <li>Keep this tab open until the transfer finishes.</li>
+        <li>The security key works for one session — refreshing the page generates a new one.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SCREEN 4: Receive -->
+  <section id="screen-receive" class="screen" aria-labelledby="receive-title">
+    <button class="back-link" data-back="screen-choice">&larr; Back</button>
+    <h1 class="hero-title" id="receive-title">Receive files</h1>
+
+    <div class="panel">
+      <div id="receive-step-key">
+        <label for="key-input">Security key</label>
+        <div class="key-input-row">
+          <input type="text" id="key-input" placeholder="e.g. K7QX9M" maxlength="10" autocomplete="off">
+          <button class="btn btn-primary" id="btn-receive-connect">Receive</button>
+        </div>
+        <p class="field-hint">Ask the sender for the key shown on their screen.</p>
+      </div>
+
+      <div id="receive-step-progress" style="display:none; margin-top:22px;">
+        <div class="link-diagram" id="receive-link-diagram">
+          <div class="link-node" id="receive-node-you">You</div>
+          <div class="link-track" aria-hidden="true"></div>
+          <div class="link-node" id="receive-node-peer">Peer</div>
+        </div>
+
+        <p class="status-line assertive" id="receive-status" role="status" aria-live="polite">Connecting&hellip;</p>
+
+        <div class="progress-wrap" id="receive-progress-wrap" style="display:none;">
+          <p class="status-line" id="receive-current-file" style="margin-bottom:8px;"></p>
+          <div class="progress-track"><div class="progress-fill" id="receive-progress-fill"></div></div>
+          <div class="progress-meta">
+            <span id="receive-progress-bytes">0 MB of 0 MB</span>
+            <span id="receive-progress-speed">0 MB/s</span>
+          </div>
+        </div>
+
+        <div id="receive-downloads"></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Good to know</strong>
+      <ul>
+        <li>Files are held in your browser's memory as they arrive, then handed to you as normal downloads — nothing touches a server.</li>
+        <li>Large transfers use more memory; close other heavy tabs if a big transfer feels slow.</li>
+        <li>If the connection drops, ask the sender for a fresh key and try again.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Pixel Share &mdash; a Pixel Power Hub tool. Peer-to-peer, every time.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Utilities ----------
+  function $(id){ return document.getElementById(id); }
+  function show(el, on){ el.style.display = on ? '' : 'none'; }
+
+  function formatBytes(bytes){
+    if (bytes === 0) return '0 MB';
+    var mb = bytes / (1024*1024);
+    if (mb < 1) return (bytes/1024).toFixed(0) + ' KB';
+    if (mb < 1024) return mb.toFixed(1) + ' MB';
+    return (mb/1024).toFixed(2) + ' GB';
+  }
+
+  function generateKey(){
+    var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no O/0/I/1
+    var key = '';
+    for (var i=0; i<6; i++){ key += chars[Math.floor(Math.random()*chars.length)]; }
+    return key;
+  }
+
+  var userName = 'Friend';
+
+  // ---------- Screen navigation ----------
+  function goTo(screenId){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    $(screenId).classList.add('active');
+    $(screenId).querySelector('h1').focus && null;
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('[data-back]').forEach(function(btn){
+    btn.addEventListener('click', function(){ goTo(btn.getAttribute('data-back')); });
+  });
+
+  $('name-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var val = $('name-input').value.trim();
+    userName = val || 'Friend';
+    $('choice-name').textContent = userName;
+    goTo('screen-choice');
+  });
+
+  $('btn-go-send').addEventListener('click', function(){ goTo('screen-send'); });
+  $('btn-go-receive').addEventListener('click', function(){ goTo('screen-receive'); });
+
+  // ================= SEND FLOW =================
+  var pickedFiles = [];
+  var sendPeer = null;
+  var sendConn = null;
+  var CHUNK_SIZE = 64 * 1024;
+
+  var fileDrop = $('file-drop');
+  var fileInput = $('file-input');
+
+  fileDrop.addEventListener('click', function(){ fileInput.click(); });
+  fileDrop.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fileInput.click(); }
+  });
+  fileDrop.addEventListener('dragover', function(e){ e.preventDefault(); fileDrop.classList.add('drag-over'); });
+  fileDrop.addEventListener('dragleave', function(){ fileDrop.classList.remove('drag-over'); });
+  fileDrop.addEventListener('drop', function(e){
+    e.preventDefault();
+    fileDrop.classList.remove('drag-over');
+    addFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', function(){ addFiles(fileInput.files); fileInput.value = ''; });
+
+  function addFiles(fileListObj){
+    for (var i=0; i<fileListObj.length; i++){ pickedFiles.push(fileListObj[i]); }
+    renderFileList();
+  }
+
+  function renderFileList(){
+    var ul = $('file-list');
+    ul.innerHTML = '';
+    pickedFiles.forEach(function(f, idx){
+      var li = document.createElement('li');
+      var nameSpan = document.createElement('span');
+      nameSpan.className = 'fname';
+      nameSpan.textContent = f.name;
+      var sizeSpan = document.createElement('span');
+      sizeSpan.className = 'fsize';
+      sizeSpan.textContent = formatBytes(f.size);
+      var removeBtn = document.createElement('button');
+      removeBtn.className = 'remove';
+      removeBtn.setAttribute('aria-label', 'Remove ' + f.name);
+      removeBtn.textContent = '\u2715';
+      removeBtn.addEventListener('click', function(){
+        pickedFiles.splice(idx, 1);
+        renderFileList();
+      });
+      li.appendChild(nameSpan);
+      li.appendChild(sizeSpan);
+      li.appendChild(removeBtn);
+      ul.appendChild(li);
+    });
+    $('btn-generate-key').disabled = pickedFiles.length === 0;
+  }
+
+  $('btn-generate-key').addEventListener('click', function(){
+    show($('send-step-pick'), false);
+    show($('send-step-waiting'), true);
+    startSenderPeer();
+  });
+
+  $('btn-copy-key').addEventListener('click', function(){
+    var key = $('send-key-value').textContent;
+    if (navigator.clipboard){
+      navigator.clipboard.writeText(key).then(function(){
+        var btn = $('btn-copy-key');
+        var original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = original; }, 1500);
+      });
+    }
+  });
+
+  function setDiagramState(diagramEl, state){
+    diagramEl.classList.remove('connecting', 'connected', 'transferring', 'done');
+    if (state) diagramEl.classList.add(state);
+  }
+
+  function startSenderPeer(){
+    var key = generateKey();
+    var peerId = 'pxs-' + key.toLowerCase();
+    $('send-key-value').textContent = key;
+
+    var diagram = $('send-link-diagram');
+    setDiagramState(diagram, 'connecting');
+    $('send-status').textContent = 'Waiting for the receiver to connect\u2026';
+
+    sendPeer = new Peer(peerId, { debug: 0 });
+
+    sendPeer.on('open', function(){ /* ready to receive connections */ });
+
+    sendPeer.on('error', function(err){
+      $('send-status').textContent = 'Connection problem: ' + (err && err.type ? err.type : 'unknown error') + '. Try refreshing to get a new key.';
+    });
+
+    sendPeer.on('connection', function(conn){
+      sendConn = conn;
+      conn.on('open', function(){
+        setDiagramState(diagram, 'connected');
+        $('send-status').textContent = 'Receiver connected. Sending now\u2026';
+      });
+      conn.on('data', function(msg){
+        if (msg && msg.type === 'ready'){
+          sendAllFiles(conn, diagram);
+        }
+      });
+      conn.on('close', function(){
+        $('send-status').textContent = 'The receiver disconnected.';
+        setDiagramState(diagram, null);
+      });
+    });
+  }
+
+  function sendAllFiles(conn, diagram){
+    show($('send-progress-wrap'), true);
+    setDiagramState(diagram, 'transferring');
+
+    var totalBytes = pickedFiles.reduce(function(sum, f){ return sum + f.size; }, 0);
+    var sentBytesTotal = 0;
+    var lastSampleTime = Date.now();
+    var lastSampleBytes = 0;
+
+    conn.send({ type: 'batch-meta', count: pickedFiles.length, totalBytes: totalBytes });
+
+    function updateProgress(){
+      var pct = totalBytes ? Math.min(100, (sentBytesTotal/totalBytes)*100) : 0;
+      $('send-progress-fill').style.width = pct + '%';
+      $('send-progress-bytes').textContent = formatBytes(sentBytesTotal) + ' of ' + formatBytes(totalBytes);
+      var now = Date.now();
+      if (now - lastSampleTime > 700){
+        var speed = (sentBytesTotal - lastSampleBytes) / ((now - lastSampleTime)/1000);
+        $('send-progress-speed').textContent = formatBytes(speed) + '/s';
+        lastSampleTime = now; lastSampleBytes = sentBytesTotal;
+      }
+    }
+
+    function sendOneFile(index){
+      if (index >= pickedFiles.length){
+        conn.send({ type: 'batch-done' });
+        $('send-status').textContent = 'All files sent.';
+        setDiagramState(diagram, 'done');
+        return;
+      }
+      var file = pickedFiles[index];
+      conn.send({ type: 'file-meta', name: file.name, size: file.size, mime: file.type || 'application/octet-stream' });
+
+      var offset = 0;
+      function sendNextChunk(){
+        if (offset >= file.size){
+          conn.send({ type: 'file-done' });
+          sendOneFile(index + 1);
+          return;
+        }
+        var slice = file.slice(offset, offset + CHUNK_SIZE);
+        slice.arrayBuffer().then(function(buf){
+          conn.send(buf);
+          offset += buf.byteLength;
+          sentBytesTotal += buf.byteLength;
+          updateProgress();
+
+          var dc = conn.dataChannel;
+          if (dc && dc.bufferedAmount > 8 * CHUNK_SIZE){
+            var wait = setInterval(function(){
+              if (dc.bufferedAmount <= 2 * CHUNK_SIZE){
+                clearInterval(wait);
+                sendNextChunk();
+              }
+            }, 30);
+          } else {
+            setTimeout(sendNextChunk, 0);
+          }
+        });
+      }
+      sendNextChunk();
+    }
+
+    sendOneFile(0);
+  }
+
+  // ================= RECEIVE FLOW =================
+  var receivePeer = null;
+  var receiveConn = null;
+  var incomingQueue = [];
+  var currentFileMeta = null;
+  var currentFileChunks = [];
+  var currentFileReceived = 0;
+  var batchTotalBytes = 0;
+  var batchReceivedBytes = 0;
+  var lastRecvSampleTime = 0;
+  var lastRecvSampleBytes = 0;
+
+  $('btn-receive-connect').addEventListener('click', function(){
+    var raw = $('key-input').value.trim().toUpperCase();
+    if (!raw){
+      $('key-input').focus();
+      return;
+    }
+    var peerId = 'pxs-' + raw.toLowerCase();
+
+    show($('receive-step-key'), false);
+    show($('receive-step-progress'), true);
+
+    var diagram = $('receive-link-diagram');
+    setDiagramState(diagram, 'connecting');
+    $('receive-status').textContent = 'Connecting to sender\u2026';
+
+    receivePeer = new Peer(undefined, { debug: 0 });
+
+    receivePeer.on('open', function(){
+      receiveConn = receivePeer.connect(peerId, { reliable: true });
+
+      receiveConn.on('open', function(){
+        setDiagramState(diagram, 'connected');
+        $('receive-status').textContent = 'Connected. Waiting for the sender to start\u2026';
+        receiveConn.send({ type: 'ready' });
+        setDiagramState(diagram, 'transferring');
+        lastRecvSampleTime = Date.now();
+      });
+
+      receiveConn.on('data', handleIncomingData);
+
+      receiveConn.on('close', function(){
+        $('receive-status').textContent = 'The sender disconnected.';
+      });
+
+      receiveConn.on('error', function(){
+        $('receive-status').textContent = 'Could not connect. Double-check the security key and try again.';
+        setDiagramState(diagram, null);
+      });
+    });
+
+    receivePeer.on('error', function(err){
+      $('receive-status').textContent = 'Connection problem: ' + (err && err.type ? err.type : 'unknown error') + '. Double-check the key and try again.';
+      setDiagramState(diagram, null);
+    });
+  });
+
+  function handleIncomingData(msg){
+    var diagram = $('receive-link-diagram');
+
+    if (msg && msg.type === 'batch-meta'){
+      batchTotalBytes = msg.totalBytes;
+      batchReceivedBytes = 0;
+      show($('receive-progress-wrap'), true);
+      $('receive-status').textContent = 'Receiving ' + msg.count + (msg.count === 1 ? ' file' : ' files') + '\u2026';
+      return;
+    }
+
+    if (msg && msg.type === 'file-meta'){
+      currentFileMeta = msg;
+      currentFileChunks = [];
+      currentFileReceived = 0;
+      $('receive-current-file').textContent = 'Now receiving: ' + msg.name;
+      return;
+    }
+
+    if (msg && msg.type === 'file-done'){
+      var blob = new Blob(currentFileChunks, { type: currentFileMeta.mime });
+      var url = URL.createObjectURL(blob);
+      addDownloadLink(currentFileMeta.name, url, currentFileMeta.size);
+      currentFileMeta = null;
+      currentFileChunks = [];
+      return;
+    }
+
+    if (msg && msg.type === 'batch-done'){
+      $('receive-status').textContent = 'Transfer complete.';
+      setDiagramState(diagram, 'done');
+      return;
+    }
+
+    // Otherwise it's a raw ArrayBuffer chunk
+    if (msg instanceof ArrayBuffer){
+      currentFileChunks.push(msg);
+      currentFileReceived += msg.byteLength;
+      batchReceivedBytes += msg.byteLength;
+      updateReceiveProgress();
+    }
+  }
+
+  function updateReceiveProgress(){
+    var pct = batchTotalBytes ? Math.min(100, (batchReceivedBytes/batchTotalBytes)*100) : 0;
+    $('receive-progress-fill').style.width = pct + '%';
+    $('receive-progress-bytes').textContent = formatBytes(batchReceivedBytes) + ' of ' + formatBytes(batchTotalBytes);
+    var now = Date.now();
+    if (now - lastRecvSampleTime > 700){
+      var speed = (batchReceivedBytes - lastRecvSampleBytes) / ((now - lastRecvSampleTime)/1000);
+      $('receive-progress-speed').textContent = formatBytes(speed) + '/s';
+      lastRecvSampleTime = now; lastRecvSampleBytes = batchReceivedBytes;
+    }
+  }
+
+  function addDownloadLink(name, url, size){
+    var box = document.createElement('div');
+    box.className = 'download-box';
+    var p = document.createElement('p');
+    p.style.margin = '0';
+    p.innerHTML = '<strong>' + name + '</strong> is ready (' + formatBytes(size) + ')';
+    var a = document.createElement('a');
+    a.className = 'btn btn-primary';
+    a.href = url;
+    a.download = name;
+    a.textContent = 'Download ' + name;
+    box.appendChild(p);
+    box.appendChild(a);
+    $('receive-downloads').appendChild(box);
+  }
+
+})();
+</script>
+</body>
+</html>
