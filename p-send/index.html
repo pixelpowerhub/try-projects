@@ -14,8 +14,8 @@
     --panel: #121B2E;
     --panel-raised: #172238;
     --border: #223049;
-    --text: #E7ECF5;
-    --text-muted: #93A1B8;
+    --text: #EDF1F8;
+    --text-muted: #9AA8C2;
     --cyan: #38BDF8;
     --cyan-dim: #1B3A50;
     --amber: #FBBF24;
@@ -23,19 +23,23 @@
     --emerald: #34D399;
     --emerald-dim: #16352A;
     --red: #F87171;
+    --red-dim: #4A1F1F;
     --radius: 14px;
     --focus: #7DD3FC;
   }
 
   *{ box-sizing:border-box; }
 
+  html{ font-size: 17px; }
   html,body{
     margin:0; padding:0;
     background: var(--bg);
     color: var(--text);
     font-family:'Inter', system-ui, sans-serif;
     min-height:100vh;
+    -webkit-text-size-adjust: 100%;
   }
+  body{ line-height:1.5; }
 
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
@@ -44,20 +48,20 @@
   .skip-link{
     position:absolute; left:-9999px; top:0;
     background:var(--cyan); color:#00202B; padding:10px 16px;
-    border-radius:0 0 8px 0; font-weight:600; z-index:100;
+    border-radius:0 0 8px 0; font-weight:700; z-index:100;
   }
   .skip-link:focus{ left:0; }
 
-  a, button, input, [tabindex]{ }
-  a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
     outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
 
   header.site-header{
     display:flex; align-items:center; justify-content:space-between;
-    padding: 22px 6vw;
+    padding: 20px 6vw;
     border-bottom: 1px solid var(--border);
+    flex-wrap:wrap; gap:8px;
   }
   .brand{
     display:flex; align-items:center; gap:10px;
@@ -77,11 +81,28 @@
   .brand-mark::after{ right:5px; }
   .tagline{ color:var(--text-muted); font-size:0.85rem; }
 
+  .header-actions{ display:flex; align-items:center; gap:14px; }
+  .wake-indicator{
+    display:none; align-items:center; gap:6px; font-size:0.78rem; color: var(--emerald);
+    font-weight:600;
+  }
+  .wake-indicator.active{ display:flex; }
+  .wake-dot{ width:7px; height:7px; border-radius:50%; background: var(--emerald); animation: pulse-dot 1.6s ease-in-out infinite; }
+  @keyframes pulse-dot{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+
   main{
     max-width: 720px;
     margin: 0 auto;
-    padding: 8vh 20px 10vh;
+    padding: 6vh 20px 10vh;
   }
+
+  .resume-banner{
+    display:none;
+    background: var(--amber-dim); border:1.5px solid var(--amber); border-radius:10px;
+    padding:14px 16px; margin-bottom:24px; font-size:0.9rem; color: var(--text);
+  }
+  .resume-banner.show{ display:block; }
+  .resume-banner strong{ color: var(--amber); }
 
   .screen{ display:none; }
   .screen.active{ display:block; animation: rise 0.4s ease; }
@@ -89,29 +110,38 @@
 
   h1.hero-title{
     font-family:'Space Grotesk', sans-serif;
-    font-size: clamp(1.7rem, 4vw, 2.4rem);
-    line-height:1.15; margin: 0 0 10px;
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    line-height:1.2; margin: 0 0 10px;
   }
   p.hero-sub{
-    color: var(--text-muted); font-size:1.02rem; line-height:1.6;
-    max-width: 52ch; margin: 0 0 36px;
+    color: var(--text-muted); font-size:1.02rem; line-height:1.65;
+    max-width: 54ch; margin: 0 0 30px;
   }
 
-  label{ display:block; font-weight:600; font-size:0.92rem; margin-bottom:8px; }
+  ul.point-list{
+    list-style:none; margin: 0 0 30px; padding:0; display:flex; flex-direction:column; gap:8px;
+  }
+  ul.point-list li{
+    display:flex; gap:10px; align-items:flex-start; color:var(--text-muted); font-size:0.92rem; line-height:1.55;
+  }
+  ul.point-list li::before{ content:"●"; color:var(--cyan); font-size:0.6rem; margin-top:0.5em; flex-shrink:0; }
+
+  label{ display:block; font-weight:600; font-size:0.95rem; margin-bottom:8px; }
   .field-hint{ color:var(--text-muted); font-size:0.85rem; margin-top:6px; }
 
-  input[type="text"]{
+  input[type="text"], textarea{
     width:100%; padding: 14px 16px; font-size:1.05rem;
     background: var(--panel); border:1.5px solid var(--border); border-radius:10px;
     color:var(--text); font-family:'Inter', sans-serif;
   }
-  input[type="text"]::placeholder{ color: #5B6B85; }
+  input[type="text"]::placeholder, textarea::placeholder{ color: #647089; }
 
   .btn{
     display:inline-flex; align-items:center; justify-content:center; gap:8px;
     font-family:'Inter', sans-serif; font-weight:600; font-size:1rem;
     padding: 14px 22px; border-radius:10px; border:1.5px solid transparent;
     cursor:pointer; text-decoration:none; transition: transform 0.12s ease, background 0.15s ease;
+    min-height:48px;
   }
   .btn:active{ transform: scale(0.98); }
   .btn:disabled{ opacity:0.45; cursor:not-allowed; }
@@ -119,19 +149,25 @@
   .btn-primary:hover:not(:disabled){ background:#5CC9FA; }
   .btn-ghost{ background:transparent; color:var(--text); border-color: var(--border); }
   .btn-ghost:hover:not(:disabled){ border-color: var(--cyan); color:var(--cyan); }
+  .btn-success{ background: var(--emerald); color:#052018; }
+  .btn-success:hover:not(:disabled){ background:#5EE8B5; }
+  .btn-danger{ background: transparent; color: var(--red); border-color: var(--red); }
+  .btn-danger:hover:not(:disabled){ background: var(--red-dim); }
   .btn-block{ width:100%; }
+  .btn-row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-row .btn{ flex:1; min-width:130px; }
 
   .choice-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top: 8px; }
   @media (max-width:560px){ .choice-grid{ grid-template-columns:1fr; } }
 
   .choice-card{
     background: var(--panel); border:1.5px solid var(--border); border-radius: var(--radius);
-    padding: 28px 22px; text-align:left; cursor:pointer; color:var(--text);
+    padding: 26px 22px; text-align:left; cursor:pointer; color:var(--text);
     font-family:'Inter', sans-serif; transition: border-color 0.15s ease, transform 0.12s ease;
   }
   .choice-card:hover{ border-color: var(--cyan); transform: translateY(-2px); }
   .choice-icon{
-    width:44px; height:44px; border-radius:10px; margin-bottom:16px;
+    width:44px; height:44px; border-radius:10px; margin-bottom:14px;
     display:flex; align-items:center; justify-content:center; font-size:1.3rem;
   }
   .choice-card.send .choice-icon{ background: var(--cyan-dim); color:var(--cyan); }
@@ -141,18 +177,18 @@
 
   .back-link{
     display:inline-flex; align-items:center; gap:6px; color:var(--text-muted);
-    text-decoration:none; font-size:0.9rem; margin-bottom: 24px; background:none; border:none;
-    cursor:pointer; font-family:'Inter',sans-serif; padding:4px;
+    text-decoration:none; font-size:0.9rem; margin-bottom: 22px; background:none; border:none;
+    cursor:pointer; font-family:'Inter',sans-serif; padding:6px 2px; min-height:auto;
   }
   .back-link:hover{ color:var(--cyan); }
 
   .panel{
     background: var(--panel); border:1.5px solid var(--border); border-radius: var(--radius);
-    padding: 28px; margin-bottom:20px;
+    padding: 26px; margin-bottom:20px;
   }
 
   .file-drop{
-    border: 1.5px dashed var(--border); border-radius: 10px; padding: 28px 18px;
+    border: 1.5px dashed var(--border); border-radius: 10px; padding: 26px 18px;
     text-align:center; cursor:pointer; transition: border-color 0.15s ease, background 0.15s ease;
   }
   .file-drop:hover, .file-drop.drag-over{ border-color: var(--cyan); background: var(--cyan-dim); }
@@ -160,18 +196,25 @@
   .file-drop-icon{ font-size:1.6rem; margin-bottom:8px; }
   .file-drop strong{ color:var(--cyan); }
 
+  ul.drop-points{
+    list-style:none; margin: 14px 0 0; padding:0; text-align:left; display:flex; flex-direction:column; gap:5px;
+  }
+  ul.drop-points li{ font-size:0.83rem; color:var(--text-muted); display:flex; gap:8px; }
+  ul.drop-points li::before{ content:"—"; color:var(--text-muted); flex-shrink:0; }
+
   .file-list{ list-style:none; margin: 16px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
   .file-list li{
     display:flex; justify-content:space-between; align-items:center; gap:10px;
     background: var(--panel-raised); border:1px solid var(--border); border-radius:8px;
-    padding:10px 14px; font-size:0.9rem;
+    padding:11px 14px; font-size:0.9rem;
   }
-  .file-list .fname{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-list .fname{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:help; }
   .file-list .fsize{ color:var(--text-muted); flex-shrink:0; font-family:'JetBrains Mono', monospace; font-size:0.82rem; }
   .file-list button.remove{
-    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1; padding:2px 6px;
+    background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.05rem; line-height:1; padding:6px;
   }
   .file-list button.remove:hover{ color: var(--red); }
+  .file-total{ margin-top:12px; font-size:0.85rem; color: var(--text-muted); text-align:right; }
 
   .key-display{
     display:flex; align-items:center; gap:12px; margin: 18px 0;
@@ -179,22 +222,24 @@
     padding: 18px 20px;
   }
   .key-display .key{
-    font-family:'JetBrains Mono', monospace; font-size: 1.7rem; letter-spacing: 3px;
+    font-family:'JetBrains Mono', monospace; font-size: 1.6rem; letter-spacing: 3px;
     font-weight:700; color: var(--amber); flex:1;
   }
-  .key-copy{
+  .key-actions{ display:flex; gap:8px; }
+  .key-btn{
     background: var(--amber-dim); color: var(--amber); border:1px solid var(--amber);
-    border-radius:8px; padding:8px 14px; font-size:0.85rem; font-weight:600; cursor:pointer;
+    border-radius:8px; padding:9px 14px; font-size:0.85rem; font-weight:600; cursor:pointer;
+    min-height:auto;
   }
-  .key-copy:hover{ background: var(--amber); color:#2B1D00; }
+  .key-btn:hover{ background: var(--amber); color:#2B1D00; }
 
-  .key-input-row{ display:flex; gap:10px; }
-  .key-input-row input{ text-transform:uppercase; letter-spacing:2px; font-family:'JetBrains Mono', monospace; }
+  .key-input-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .key-input-row input{ text-transform:uppercase; letter-spacing:2px; font-family:'JetBrains Mono', monospace; flex:1; min-width:160px; }
 
   /* Connection signature: two nodes + animated link */
   .link-diagram{
     display:flex; align-items:center; justify-content:center; gap:0;
-    margin: 8px 0 22px; padding: 22px 6px;
+    margin: 8px 0 20px; padding: 20px 6px;
   }
   .link-node{
     width:56px; height:56px; border-radius:50%; flex-shrink:0;
@@ -204,10 +249,11 @@
     color: var(--text-muted); text-align:center; transition: border-color 0.3s ease, color 0.3s ease;
   }
   .link-diagram.connecting .link-node{ border-color: var(--amber); color: var(--amber); }
-  .link-diagram.connected .link-node, .link-diagram.transferring .link-node, .link-diagram.done .link-node{
+  .link-diagram.connected .link-node, .link-diagram.transferring .link-node, .link-diagram.done .link-node, .link-diagram.pending .link-node{
     border-color: var(--cyan); color: var(--cyan);
   }
   .link-diagram.done .link-node{ border-color: var(--emerald); color: var(--emerald); }
+  .link-diagram.lost .link-node{ border-color: var(--red); color: var(--red); }
 
   .link-track{
     flex:1; max-width:220px; height:2px; background: var(--border); position:relative; margin: 0 6px;
@@ -217,19 +263,21 @@
     content:""; position:absolute; inset:0; background: repeating-linear-gradient(90deg, var(--cyan) 0 8px, transparent 8px 16px);
     opacity:0; transform: translateX(-100%);
   }
-  .link-diagram.connecting .link-track::before{
+  .link-diagram.connecting .link-track::before, .link-diagram.pending .link-track::before{
     opacity:0.9; animation: flow 1s linear infinite;
   }
   .link-diagram.transferring .link-track::before{
     opacity:1; animation: flow 0.5s linear infinite;
   }
   .link-diagram.done .link-track{ background: var(--emerald); }
+  .link-diagram.lost .link-track{ background: var(--red); }
   @keyframes flow{ from{ transform: translateX(-100%);} to{ transform: translateX(0%);} }
 
   .status-line{
     text-align:center; font-size:0.95rem; color: var(--text-muted); min-height:1.4em; margin-bottom: 6px;
   }
   .status-line.assertive{ color: var(--text); font-weight:600; }
+  .status-line.warn{ color: var(--red); font-weight:600; }
 
   .progress-wrap{ margin-top:18px; }
   .progress-track{
@@ -241,7 +289,7 @@
     transition: width 0.2s ease;
   }
   .progress-meta{
-    display:flex; justify-content:space-between; margin-top:10px;
+    display:flex; justify-content:space-between; margin-top:10px; flex-wrap:wrap; gap:6px;
     font-family:'JetBrains Mono', monospace; font-size:0.82rem; color: var(--text-muted);
   }
 
@@ -253,12 +301,40 @@
 
   .note-box{
     background: var(--panel-raised); border:1px solid var(--border); border-left:3px solid var(--cyan);
-    border-radius: 8px; padding: 16px 18px; font-size:0.87rem; color: var(--text-muted); line-height:1.6;
+    border-radius: 8px; padding: 16px 18px; font-size:0.87rem; color: var(--text-muted); line-height:1.65;
     margin-top: 24px;
   }
   .note-box strong{ color: var(--text); }
   .note-box ul{ margin: 8px 0 0; padding-left: 18px; }
-  .note-box li{ margin-bottom:4px; }
+  .note-box li{ margin-bottom:5px; }
+
+  /* Approval panel */
+  .approval-box{
+    background: var(--panel-raised); border:1.5px solid var(--amber); border-radius:10px;
+    padding:20px; margin: 18px 0;
+  }
+  .approval-box h3{ margin:0 0 6px; font-family:'Space Grotesk', sans-serif; font-size:1.05rem; }
+  .approval-box p{ margin:0 0 16px; color: var(--text-muted); font-size:0.9rem; }
+  .approval-box .requester-name{ color: var(--amber); font-weight:700; }
+
+  /* Chat */
+  .chat-panel{
+    margin-top:18px; border:1px solid var(--border); border-radius:10px; overflow:hidden; background: var(--panel);
+  }
+  .chat-header{
+    padding:10px 14px; font-size:0.82rem; font-weight:600; color: var(--text-muted);
+    border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
+  }
+  .chat-log{
+    max-height:160px; overflow-y:auto; padding:12px 14px; display:flex; flex-direction:column; gap:8px;
+  }
+  .chat-empty{ color: var(--text-muted); font-size:0.83rem; font-style:italic; }
+  .chat-msg{ max-width:80%; padding:8px 12px; border-radius:10px; font-size:0.88rem; line-height:1.4; }
+  .chat-msg.mine{ align-self:flex-end; background: var(--cyan-dim); color: var(--text); border-bottom-right-radius:3px; }
+  .chat-msg.theirs{ align-self:flex-start; background: var(--panel-raised); border:1px solid var(--border); border-bottom-left-radius:3px; }
+  .chat-input-row{ display:flex; gap:8px; padding:10px; border-top:1px solid var(--border); }
+  .chat-input-row input{ flex:1; padding:10px 12px; font-size:0.92rem; }
+  .chat-input-row button{ padding:10px 16px; min-height:auto; }
 
   footer.site-footer{
     text-align:center; color: var(--text-muted); font-size:0.82rem; padding: 24px; border-top:1px solid var(--border);
@@ -279,10 +355,17 @@
     <span class="brand-mark" aria-hidden="true"></span>
     Pixel Share
   </span>
-  <span class="tagline">by Pixel Power Hub</span>
+  <div class="header-actions">
+    <span class="wake-indicator" id="wake-indicator"><span class="wake-dot" aria-hidden="true"></span> Screen staying awake</span>
+    <span class="tagline">by Pixel Power Hub</span>
+  </div>
 </header>
 
 <main id="main-content">
+
+  <div class="resume-banner" id="resume-banner" role="status">
+    <strong>Welcome back.</strong> <span id="resume-banner-text">Your browser reloaded this tab, so any files or connection you had are gone — that's a phone memory limit, not a bug in Pixel Share. Please pick up from here.</span>
+  </div>
 
   <!-- SCREEN 1: Name entry -->
   <section id="screen-name" class="screen active" aria-labelledby="name-title">
@@ -301,7 +384,7 @@
   <section id="screen-choice" class="screen" aria-labelledby="choice-title">
     <button class="back-link" data-back="screen-name">&larr; Back</button>
     <h1 class="hero-title" id="choice-title">What would you like to do, <span id="choice-name">friend</span>?</h1>
-    <p class="hero-sub">Pick a side. One person sends, the other receives — you'll need a security key to link the two.</p>
+    <p class="hero-sub">Pick a side. One person sends, the other receives — you'll need a security key to link the two, and the sender approves every request before anything transfers.</p>
 
     <div class="choice-grid">
       <button class="choice-card send" id="btn-go-send">
@@ -312,7 +395,7 @@
       <button class="choice-card receive" id="btn-go-receive">
         <span class="choice-icon" aria-hidden="true">&#8595;</span>
         <h2>Receive files</h2>
-        <p>Enter the security key someone shared with you to start receiving.</p>
+        <p>Enter the security key someone shared with you to request the files.</p>
       </button>
     </div>
   </section>
@@ -328,10 +411,15 @@
         <div class="file-drop" id="file-drop" tabindex="0" role="button" aria-labelledby="file-drop-label" aria-describedby="file-drop-hint">
           <div class="file-drop-icon" aria-hidden="true">&#128193;</div>
           <div><strong>Choose files</strong> or drag them here</div>
-          <p class="field-hint" id="file-drop-hint">Works best under about 1.5 GB total, depending on your browser's available memory.</p>
+          <ul class="drop-points" id="file-drop-hint">
+            <li>Best kept under about 1.5 GB in total, depending on your phone's free memory.</li>
+            <li>Very large selections are more likely to be lost if you switch apps for a long time — see the note below.</li>
+            <li>You can remove a file from the list before generating your key.</li>
+          </ul>
           <input type="file" id="file-input" multiple>
         </div>
         <ul class="file-list" id="file-list" aria-live="polite"></ul>
+        <div class="file-total" id="file-total" aria-live="polite"></div>
         <button class="btn btn-primary btn-block" id="btn-generate-key" style="margin-top:20px;" disabled>Generate security key</button>
       </div>
 
@@ -339,7 +427,10 @@
         <p class="status-line">Share this security key with the receiver:</p>
         <div class="key-display">
           <span class="key" id="send-key-value">------</span>
-          <button class="key-copy" id="btn-copy-key">Copy</button>
+          <div class="key-actions">
+            <button class="key-btn" id="btn-share-key">Share</button>
+            <button class="key-btn" id="btn-copy-key">Copy</button>
+          </div>
         </div>
 
         <div class="link-diagram" id="send-link-diagram">
@@ -350,6 +441,25 @@
 
         <p class="status-line assertive" id="send-status" role="status" aria-live="polite">Waiting for the receiver to connect&hellip;</p>
 
+        <!-- Approval box, shown once a receiver requests the files -->
+        <div class="approval-box" id="send-approval-box" style="display:none;">
+          <h3>Connection request</h3>
+          <p><span class="requester-name" id="requester-name">Someone</span> entered your key and wants to receive your files. Chat with them below to make sure it's the right person before approving.</p>
+          <div class="btn-row">
+            <button class="btn btn-success" id="btn-approve">Approve &amp; send</button>
+            <button class="btn btn-danger" id="btn-decline">Decline</button>
+          </div>
+          <div class="chat-panel">
+            <div class="chat-header"><span>Verify with the receiver</span><span>Messages clear when the session ends</span></div>
+            <div class="chat-log" id="send-chat-log" aria-live="polite"><p class="chat-empty">No messages yet.</p></div>
+            <div class="chat-input-row">
+              <label for="send-chat-input" class="visually-hidden">Message to receiver</label>
+              <input type="text" id="send-chat-input" placeholder="Type a message&hellip;" maxlength="200">
+              <button class="btn btn-ghost" id="btn-send-chat">Send</button>
+            </div>
+          </div>
+        </div>
+
         <div class="progress-wrap" id="send-progress-wrap" style="display:none;">
           <div class="progress-track"><div class="progress-fill" id="send-progress-fill"></div></div>
           <div class="progress-meta">
@@ -357,15 +467,20 @@
             <span id="send-progress-speed">0 MB/s</span>
           </div>
         </div>
+
+        <div class="btn-row" id="send-retry-row" style="display:none; margin-top:14px;">
+          <button class="btn btn-ghost btn-block" id="btn-send-start-over">Start over</button>
+        </div>
       </div>
     </div>
 
     <div class="note-box">
-      <strong>How this works</strong>
+      <strong>Why files sometimes disappear on large transfers</strong>
       <ul>
-        <li>Your files travel directly to the receiver's browser over a peer-to-peer connection — Pixel Share's server only helps the two of you find each other.</li>
-        <li>Keep this tab open until the transfer finishes.</li>
-        <li>The security key works for one session — refreshing the page generates a new one.</li>
+        <li>Phones can reclaim memory from a background browser tab, especially one holding a large file — this can force the whole page to reload and clear your selection.</li>
+        <li>Use the <strong>Share</strong> button to send your key through WhatsApp or any app — it opens a share sheet without fully leaving Pixel Share, which is safer than switching apps manually.</li>
+        <li>Once transferring, try to keep this tab open and in view rather than minimising it for long periods.</li>
+        <li>If your selection does get cleared, come back here and choose the files again — your name and place in the app are remembered.</li>
       </ul>
     </div>
   </section>
@@ -382,7 +497,7 @@
           <input type="text" id="key-input" placeholder="e.g. K7QX9M" maxlength="10" autocomplete="off">
           <button class="btn btn-primary" id="btn-receive-connect">Receive</button>
         </div>
-        <p class="field-hint">Ask the sender for the key shown on their screen.</p>
+        <p class="field-hint">Ask the sender for the key shown on their screen. They'll need to approve your request before the transfer starts.</p>
       </div>
 
       <div id="receive-step-progress" style="display:none; margin-top:22px;">
@@ -394,6 +509,17 @@
 
         <p class="status-line assertive" id="receive-status" role="status" aria-live="polite">Connecting&hellip;</p>
 
+        <!-- Waiting-for-approval chat -->
+        <div class="chat-panel" id="receive-chat-panel" style="display:none;">
+          <div class="chat-header"><span>Chat with the sender while you wait</span><span>Messages clear when the session ends</span></div>
+          <div class="chat-log" id="receive-chat-log" aria-live="polite"><p class="chat-empty">No messages yet.</p></div>
+          <div class="chat-input-row">
+            <label for="receive-chat-input" class="visually-hidden">Message to sender</label>
+            <input type="text" id="receive-chat-input" placeholder="Type a message&hellip;" maxlength="200">
+            <button class="btn btn-ghost" id="btn-receive-send-chat">Send</button>
+          </div>
+        </div>
+
         <div class="progress-wrap" id="receive-progress-wrap" style="display:none;">
           <p class="status-line" id="receive-current-file" style="margin-bottom:8px;"></p>
           <div class="progress-track"><div class="progress-fill" id="receive-progress-fill"></div></div>
@@ -404,6 +530,10 @@
         </div>
 
         <div id="receive-downloads"></div>
+
+        <div class="btn-row" id="receive-retry-row" style="display:none; margin-top:14px;">
+          <button class="btn btn-ghost btn-block" id="btn-receive-start-over">Try a different key</button>
+        </div>
       </div>
     </div>
 
@@ -412,7 +542,8 @@
       <ul>
         <li>Files are held in your browser's memory as they arrive, then handed to you as normal downloads — nothing touches a server.</li>
         <li>Large transfers use more memory; close other heavy tabs if a big transfer feels slow.</li>
-        <li>If the connection drops, ask the sender for a fresh key and try again.</li>
+        <li>If the sender doesn't respond to your request, ask them to check their screen — the approval prompt is easy to miss.</li>
+        <li>If the connection drops, ask the sender for the key again and try once more.</li>
       </ul>
     </div>
   </section>
@@ -432,7 +563,7 @@
   function show(el, on){ el.style.display = on ? '' : 'none'; }
 
   function formatBytes(bytes){
-    if (bytes === 0) return '0 MB';
+    if (!bytes || bytes === 0) return '0 MB';
     var mb = bytes / (1024*1024);
     if (mb < 1) return (bytes/1024).toFixed(0) + ' KB';
     if (mb < 1024) return mb.toFixed(1) + ' MB';
@@ -446,14 +577,37 @@
     return key;
   }
 
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
   var userName = 'Friend';
+
+  // ---------- Lightweight session memory (name + step only — never file data) ----------
+  var SESSION_KEY = 'pixelShareSession';
+  function saveSessionMarker(step){
+    try{
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ step: step, name: userName, ts: Date.now() }));
+    }catch(e){ /* storage unavailable — ignore, app still works */ }
+  }
+  function clearSessionMarker(){
+    try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+  }
+  function readSessionMarker(){
+    try{
+      var raw = sessionStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
 
   // ---------- Screen navigation ----------
   function goTo(screenId){
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     $(screenId).classList.add('active');
-    $(screenId).querySelector('h1').focus && null;
     window.scrollTo(0,0);
+    saveSessionMarker(screenId);
   }
 
   document.querySelectorAll('[data-back]').forEach(function(btn){
@@ -471,11 +625,64 @@
   $('btn-go-send').addEventListener('click', function(){ goTo('screen-send'); });
   $('btn-go-receive').addEventListener('click', function(){ goTo('screen-receive'); });
 
+  // Restore whatever we safely can after a tab reload (never restores files or live connections)
+  (function restoreSession(){
+    var marker = readSessionMarker();
+    if (!marker || !marker.step || marker.step === 'screen-name') return;
+    userName = marker.name || 'Friend';
+    $('name-input').value = userName;
+    $('choice-name').textContent = userName;
+
+    var banner = $('resume-banner');
+    if (marker.step === 'screen-send' || marker.step === 'screen-receive'){
+      banner.classList.add('show');
+      goTo('screen-choice');
+    }
+  })();
+
+  // ---------- Wake Lock (keep the screen on during connect / transfer) ----------
+  var wakeLock = null;
+  function requestWakeLock(){
+    if (!('wakeLock' in navigator)) return;
+    navigator.wakeLock.request('screen').then(function(lock){
+      wakeLock = lock;
+      $('wake-indicator').classList.add('active');
+      wakeLock.addEventListener('release', function(){
+        $('wake-indicator').classList.remove('active');
+      });
+    }).catch(function(){ /* denied or unsupported — fine, just a best-effort mitigation */ });
+  }
+  function releaseWakeLock(){
+    if (wakeLock){ wakeLock.release().catch(function(){}); wakeLock = null; }
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && (sendConn || receiveConn)){
+      requestWakeLock();
+      if (sendPeer && sendPeer.disconnected) sendPeer.reconnect();
+      if (receivePeer && receivePeer.disconnected) receivePeer.reconnect();
+    }
+  });
+
+  // Warn before leaving mid-transfer
+  var transferActive = false;
+  window.addEventListener('beforeunload', function(e){
+    if (transferActive){
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+  });
+
+  function setDiagramState(diagramEl, state){
+    diagramEl.classList.remove('connecting', 'connected', 'transferring', 'done', 'pending', 'lost');
+    if (state) diagramEl.classList.add(state);
+  }
+
   // ================= SEND FLOW =================
   var pickedFiles = [];
   var sendPeer = null;
   var sendConn = null;
-  var CHUNK_SIZE = 64 * 1024;
+  var CHUNK_SIZE = 96 * 1024;
 
   var fileDrop = $('file-drop');
   var fileInput = $('file-input');
@@ -501,11 +708,14 @@
   function renderFileList(){
     var ul = $('file-list');
     ul.innerHTML = '';
+    var total = 0;
     pickedFiles.forEach(function(f, idx){
+      total += f.size;
       var li = document.createElement('li');
       var nameSpan = document.createElement('span');
       nameSpan.className = 'fname';
       nameSpan.textContent = f.name;
+      nameSpan.title = f.name;
       var sizeSpan = document.createElement('span');
       sizeSpan.className = 'fsize';
       sizeSpan.textContent = formatBytes(f.size);
@@ -522,6 +732,7 @@
       li.appendChild(removeBtn);
       ul.appendChild(li);
     });
+    $('file-total').textContent = pickedFiles.length ? (pickedFiles.length + ' file(s) — ' + formatBytes(total) + ' total') : '';
     $('btn-generate-key').disabled = pickedFiles.length === 0;
   }
 
@@ -534,18 +745,39 @@
   $('btn-copy-key').addEventListener('click', function(){
     var key = $('send-key-value').textContent;
     if (navigator.clipboard){
-      navigator.clipboard.writeText(key).then(function(){
-        var btn = $('btn-copy-key');
-        var original = btn.textContent;
-        btn.textContent = 'Copied';
-        setTimeout(function(){ btn.textContent = original; }, 1500);
-      });
+      navigator.clipboard.writeText(key).then(function(){ flashButton($('btn-copy-key'), 'Copied'); });
     }
   });
 
-  function setDiagramState(diagramEl, state){
-    diagramEl.classList.remove('connecting', 'connected', 'transferring', 'done');
-    if (state) diagramEl.classList.add(state);
+  $('btn-share-key').addEventListener('click', function(){
+    var key = $('send-key-value').textContent;
+    var shareText = userName + ' is sharing files with you on Pixel Share. Open Pixel Share, choose "Receive files", and enter this security key: ' + key;
+    if (navigator.share){
+      navigator.share({ title: 'Pixel Share security key', text: shareText }).catch(function(){ /* user cancelled — fine */ });
+    } else if (navigator.clipboard){
+      navigator.clipboard.writeText(shareText).then(function(){ flashButton($('btn-share-key'), 'Copied to share'); });
+    }
+  });
+
+  function flashButton(btn, text){
+    var original = btn.textContent;
+    btn.textContent = text;
+    setTimeout(function(){ btn.textContent = original; }, 1500);
+  }
+
+  $('btn-send-start-over').addEventListener('click', function(){ resetSendFlow(); });
+
+  function resetSendFlow(){
+    if (sendConn){ try{ sendConn.close(); }catch(e){} }
+    if (sendPeer){ try{ sendPeer.destroy(); }catch(e){} }
+    sendPeer = null; sendConn = null; pickedFiles = [];
+    transferActive = false; releaseWakeLock();
+    renderFileList();
+    show($('send-step-waiting'), false);
+    show($('send-approval-box'), false);
+    show($('send-progress-wrap'), false);
+    show($('send-retry-row'), false);
+    show($('send-step-pick'), true);
   }
 
   function startSenderPeer(){
@@ -556,34 +788,95 @@
     var diagram = $('send-link-diagram');
     setDiagramState(diagram, 'connecting');
     $('send-status').textContent = 'Waiting for the receiver to connect\u2026';
+    requestWakeLock();
 
     sendPeer = new Peer(peerId, { debug: 0 });
 
-    sendPeer.on('open', function(){ /* ready to receive connections */ });
-
     sendPeer.on('error', function(err){
-      $('send-status').textContent = 'Connection problem: ' + (err && err.type ? err.type : 'unknown error') + '. Try refreshing to get a new key.';
+      var type = err && err.type ? err.type : 'unknown error';
+      $('send-status').textContent = 'Connection problem (' + type + '). Try "Start over" for a fresh key.';
+      $('send-status').classList.add('warn');
+      setDiagramState(diagram, 'lost');
+      show($('send-retry-row'), true);
+    });
+
+    sendPeer.on('disconnected', function(){
+      $('send-status').textContent = 'Reconnecting to the network\u2026';
+      setDiagramState(diagram, 'connecting');
+      sendPeer.reconnect();
     });
 
     sendPeer.on('connection', function(conn){
       sendConn = conn;
       conn.on('open', function(){
         setDiagramState(diagram, 'connected');
-        $('send-status').textContent = 'Receiver connected. Sending now\u2026';
+        $('send-status').textContent = 'Someone connected — waiting for their request\u2026';
       });
       conn.on('data', function(msg){
-        if (msg && msg.type === 'ready'){
-          sendAllFiles(conn, diagram);
+        if (msg && msg.type === 'connect-request'){
+          $('requester-name').textContent = msg.name || 'Someone';
+          show($('send-approval-box'), true);
+          setDiagramState(diagram, 'pending');
+          $('send-status').textContent = 'Waiting for your approval\u2026';
+        } else if (msg && msg.type === 'chat'){
+          appendChatMessage('send-chat-log', msg.text, false);
         }
       });
       conn.on('close', function(){
-        $('send-status').textContent = 'The receiver disconnected.';
-        setDiagramState(diagram, null);
+        if (!transferActive){
+          $('send-status').textContent = 'The receiver disconnected. Still listening for a connection\u2026';
+          setDiagramState(diagram, 'connecting');
+          show($('send-approval-box'), false);
+        }
       });
     });
+
+    $('btn-approve').addEventListener('click', onApprove);
+    $('btn-decline').addEventListener('click', onDecline);
+    $('btn-send-chat').addEventListener('click', sendChatFromSender);
+    $('send-chat-input').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ sendChatFromSender(); } });
+  }
+
+  function onApprove(){
+    if (!sendConn) return;
+    show($('send-approval-box'), false);
+    sendConn.send({ type: 'approved' });
+    sendAllFiles(sendConn, $('send-link-diagram'));
+  }
+
+  function onDecline(){
+    if (!sendConn) return;
+    sendConn.send({ type: 'declined' });
+    show($('send-approval-box'), false);
+    setDiagramState($('send-link-diagram'), 'connecting');
+    $('send-status').textContent = 'Declined. Still listening for a connection\u2026';
+    $('send-chat-log').innerHTML = '<p class="chat-empty">No messages yet.</p>';
+    try{ sendConn.close(); }catch(e){}
+    sendConn = null;
+  }
+
+  function sendChatFromSender(){
+    var input = $('send-chat-input');
+    var text = input.value.trim();
+    if (!text || !sendConn) return;
+    sendConn.send({ type: 'chat', text: text });
+    appendChatMessage('send-chat-log', text, true);
+    input.value = '';
+  }
+
+  function appendChatMessage(logId, text, mine){
+    var log = $(logId);
+    var empty = log.querySelector('.chat-empty');
+    if (empty) empty.remove();
+    var div = document.createElement('div');
+    div.className = 'chat-msg ' + (mine ? 'mine' : 'theirs');
+    div.textContent = text;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
   }
 
   function sendAllFiles(conn, diagram){
+    transferActive = true;
     show($('send-progress-wrap'), true);
     setDiagramState(diagram, 'transferring');
 
@@ -611,6 +904,9 @@
         conn.send({ type: 'batch-done' });
         $('send-status').textContent = 'All files sent.';
         setDiagramState(diagram, 'done');
+        transferActive = false;
+        releaseWakeLock();
+        show($('send-retry-row'), true);
         return;
       }
       var file = pickedFiles[index];
@@ -618,6 +914,15 @@
 
       var offset = 0;
       function sendNextChunk(){
+        if (!sendConn || sendConn.open === false){
+          $('send-status').textContent = 'Connection lost during transfer.';
+          $('send-status').classList.add('warn');
+          setDiagramState(diagram, 'lost');
+          transferActive = false;
+          releaseWakeLock();
+          show($('send-retry-row'), true);
+          return;
+        }
         if (offset >= file.size){
           conn.send({ type: 'file-done' });
           sendOneFile(index + 1);
@@ -633,7 +938,7 @@
           var dc = conn.dataChannel;
           if (dc && dc.bufferedAmount > 8 * CHUNK_SIZE){
             var wait = setInterval(function(){
-              if (dc.bufferedAmount <= 2 * CHUNK_SIZE){
+              if (!dc || dc.bufferedAmount <= 2 * CHUNK_SIZE){
                 clearInterval(wait);
                 sendNextChunk();
               }
@@ -641,6 +946,12 @@
           } else {
             setTimeout(sendNextChunk, 0);
           }
+        }).catch(function(){
+          $('send-status').textContent = 'A read error interrupted the transfer.';
+          $('send-status').classList.add('warn');
+          transferActive = false;
+          releaseWakeLock();
+          show($('send-retry-row'), true);
         });
       }
       sendNextChunk();
@@ -652,10 +963,8 @@
   // ================= RECEIVE FLOW =================
   var receivePeer = null;
   var receiveConn = null;
-  var incomingQueue = [];
   var currentFileMeta = null;
   var currentFileChunks = [];
-  var currentFileReceived = 0;
   var batchTotalBytes = 0;
   var batchReceivedBytes = 0;
   var lastRecvSampleTime = 0;
@@ -671,10 +980,12 @@
 
     show($('receive-step-key'), false);
     show($('receive-step-progress'), true);
+    show($('receive-retry-row'), false);
 
     var diagram = $('receive-link-diagram');
     setDiagramState(diagram, 'connecting');
     $('receive-status').textContent = 'Connecting to sender\u2026';
+    requestWakeLock();
 
     receivePeer = new Peer(undefined, { debug: 0 });
 
@@ -682,33 +993,101 @@
       receiveConn = receivePeer.connect(peerId, { reliable: true });
 
       receiveConn.on('open', function(){
-        setDiagramState(diagram, 'connected');
-        $('receive-status').textContent = 'Connected. Waiting for the sender to start\u2026';
-        receiveConn.send({ type: 'ready' });
-        setDiagramState(diagram, 'transferring');
-        lastRecvSampleTime = Date.now();
+        setDiagramState(diagram, 'pending');
+        $('receive-status').textContent = 'Connected. Waiting for the sender to approve your request\u2026';
+        receiveConn.send({ type: 'connect-request', name: userName });
+        show($('receive-chat-panel'), true);
       });
 
       receiveConn.on('data', handleIncomingData);
 
       receiveConn.on('close', function(){
-        $('receive-status').textContent = 'The sender disconnected.';
+        if (!transferActive){
+          $('receive-status').textContent = 'The sender disconnected.';
+          $('receive-status').classList.add('warn');
+          setDiagramState(diagram, 'lost');
+          show($('receive-retry-row'), true);
+        }
       });
 
       receiveConn.on('error', function(){
         $('receive-status').textContent = 'Could not connect. Double-check the security key and try again.';
-        setDiagramState(diagram, null);
+        $('receive-status').classList.add('warn');
+        setDiagramState(diagram, 'lost');
+        show($('receive-retry-row'), true);
       });
     });
 
     receivePeer.on('error', function(err){
-      $('receive-status').textContent = 'Connection problem: ' + (err && err.type ? err.type : 'unknown error') + '. Double-check the key and try again.';
-      setDiagramState(diagram, null);
+      var type = err && err.type ? err.type : 'unknown error';
+      $('receive-status').textContent = 'Connection problem (' + type + '). Double-check the key and try again.';
+      $('receive-status').classList.add('warn');
+      setDiagramState(diagram, 'lost');
+      show($('receive-retry-row'), true);
+    });
+
+    receivePeer.on('disconnected', function(){
+      $('receive-status').textContent = 'Reconnecting to the network\u2026';
+      receivePeer.reconnect();
     });
   });
 
+  $('btn-receive-send-chat').addEventListener('click', sendChatFromReceiver);
+  $('receive-chat-input').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ sendChatFromReceiver(); } });
+
+  function sendChatFromReceiver(){
+    var input = $('receive-chat-input');
+    var text = input.value.trim();
+    if (!text || !receiveConn) return;
+    receiveConn.send({ type: 'chat', text: text });
+    appendChatMessage('receive-chat-log', text, true);
+    input.value = '';
+  }
+
+  $('btn-receive-start-over').addEventListener('click', function(){ resetReceiveFlow(); });
+
+  function resetReceiveFlow(){
+    if (receiveConn){ try{ receiveConn.close(); }catch(e){} }
+    if (receivePeer){ try{ receivePeer.destroy(); }catch(e){} }
+    receivePeer = null; receiveConn = null;
+    currentFileMeta = null; currentFileChunks = [];
+    batchTotalBytes = 0; batchReceivedBytes = 0;
+    transferActive = false; releaseWakeLock();
+    $('key-input').value = '';
+    $('receive-chat-log').innerHTML = '<p class="chat-empty">No messages yet.</p>';
+    $('receive-downloads').innerHTML = '';
+    show($('receive-chat-panel'), false);
+    show($('receive-progress-wrap'), false);
+    show($('receive-retry-row'), false);
+    show($('receive-step-progress'), false);
+    show($('receive-step-key'), true);
+  }
+
   function handleIncomingData(msg){
     var diagram = $('receive-link-diagram');
+
+    if (msg && msg.type === 'declined'){
+      $('receive-status').textContent = 'The sender declined your request.';
+      $('receive-status').classList.add('warn');
+      setDiagramState(diagram, 'lost');
+      show($('receive-chat-panel'), false);
+      show($('receive-retry-row'), true);
+      return;
+    }
+
+    if (msg && msg.type === 'approved'){
+      transferActive = true;
+      setDiagramState(diagram, 'transferring');
+      $('receive-status').textContent = 'Approved! Receiving files\u2026';
+      show($('receive-chat-panel'), false);
+      lastRecvSampleTime = Date.now();
+      return;
+    }
+
+    if (msg && msg.type === 'chat'){
+      appendChatMessage('receive-chat-log', msg.text, false);
+      return;
+    }
 
     if (msg && msg.type === 'batch-meta'){
       batchTotalBytes = msg.totalBytes;
@@ -721,7 +1100,6 @@
     if (msg && msg.type === 'file-meta'){
       currentFileMeta = msg;
       currentFileChunks = [];
-      currentFileReceived = 0;
       $('receive-current-file').textContent = 'Now receiving: ' + msg.name;
       return;
     }
@@ -738,13 +1116,15 @@
     if (msg && msg.type === 'batch-done'){
       $('receive-status').textContent = 'Transfer complete.';
       setDiagramState(diagram, 'done');
+      transferActive = false;
+      releaseWakeLock();
+      show($('receive-retry-row'), true);
       return;
     }
 
     // Otherwise it's a raw ArrayBuffer chunk
     if (msg instanceof ArrayBuffer){
       currentFileChunks.push(msg);
-      currentFileReceived += msg.byteLength;
       batchReceivedBytes += msg.byteLength;
       updateReceiveProgress();
     }
@@ -767,7 +1147,7 @@
     box.className = 'download-box';
     var p = document.createElement('p');
     p.style.margin = '0';
-    p.innerHTML = '<strong>' + name + '</strong> is ready (' + formatBytes(size) + ')';
+    p.innerHTML = '<strong>' + escapeHtml(name) + '</strong> is ready (' + formatBytes(size) + ')';
     var a = document.createElement('a');
     a.className = 'btn btn-primary';
     a.href = url;
